@@ -9,12 +9,12 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050509; color: #f3f4f6; min-height: 100vh; }
         .ios-bold { font-weight: 800; letter-spacing: -0.025em; }
-        .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        .glass-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
         .btn-3d { transition: all 0.2s ease; box-shadow: 0 4px 0 #0284c7; }
         .btn-3d:active { transform: translateY(4px); box-shadow: 0 0 0 #0284c7; }
     </style>
 </head>
-<body class="p-4 md:p-6 pb-20">
+<body class="p-4 md:p-8 pb-24">
 
     <!-- LOGIN MODAL -->
     <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4">
@@ -44,40 +44,43 @@
         </header>
 
         <!-- INSTAGRAM MULTI-SESSION MODULE -->
-        <div class="glass-card p-6 rounded-3xl space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="text-base ios-bold text-cyan-400 flex items-center gap-2">📸 Instagram Multi-Session Automation</h3>
-                <button onclick="openAddAccountModal()" class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">+ Add Account</button>
+        <div class="glass-card p-6 rounded-3xl space-y-6">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-4">
+                <div>
+                    <h3 class="text-base ios-bold text-cyan-400">📸 Instagram Multi-Session Hub</h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Manage multiple accounts, custom spam, and multi-NC loops.</p>
+                </div>
+                <button onclick="openAddAccountModal()" class="px-5 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">+ Add Account</button>
             </div>
             
-            <!-- CONNECTED ACCOUNTS CONTAINER -->
-            <div id="accounts-container" class="space-y-4 pt-2">
-                <p class="text-xs text-gray-400 italic">No Instagram accounts added yet. Click "+ Add Account" to start.</p>
+            <!-- CONNECTED ACCOUNTS CONTAINER (SEPARATE LINES) -->
+            <div id="accounts-container" class="space-y-4">
+                <p class="text-xs text-gray-400 italic">No Instagram accounts connected yet. Click "+ Add Account" above.</p>
             </div>
         </div>
 
         <!-- OWNER ONLY SECTIONS -->
         <div id="owner-exclusive-section" class="space-y-6 hidden">
             <div class="glass-card p-6 rounded-3xl space-y-4 border border-amber-500/30">
-                <h3 class="text-base ios-bold text-amber-400 flex items-center gap-2">👑 Owner GC Creator & Multi-GC Hub</h3>
-                <div class="flex flex-wrap gap-2">
-                    <input type="text" id="new-gc-name" placeholder="New GC Name" class="flex-1 bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white">
-                    <button onclick="createGC()" class="px-6 py-3 bg-amber-600 btn-3d ios-bold text-xs rounded-xl text-white">Create GC ➕</button>
+                <h3 class="text-base ios-bold text-amber-400">👑 Owner GC Creator & Multi-GC Hub</h3>
+                <div class="space-y-3">
+                    <input type="text" id="new-gc-name" placeholder="Enter New GC Name" class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white">
+                    <button onclick="createGC()" class="w-full py-3 bg-amber-600 btn-3d ios-bold text-xs rounded-xl text-white">Create GC ➕</button>
                 </div>
-                <div id="gc-list-container" class="text-xs text-gray-300 font-mono">Active GCs: VIP Spam Zone, Elite Changers, Unnat Squad</div>
+                <div id="gc-list-container" class="text-xs text-gray-300 font-mono pt-2">Active GCs: VIP Spam Zone, Elite Changers, Unnat Squad</div>
             </div>
 
             <div class="glass-card p-6 rounded-3xl space-y-4">
-                <h3 class="text-base ios-bold text-emerald-400 flex items-center gap-2">💬 WhatsApp Bot Pairing</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <input type="text" id="wa-phone" placeholder="Phone Number with Country Code" class="bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white">
-                    <button onclick="pairWhatsApp()" class="py-3 bg-gradient-to-r from-emerald-500 to-teal-600 btn-3d ios-bold text-xs rounded-xl text-white">Generate Pair Code 🔗</button>
+                <h3 class="text-base ios-bold text-emerald-400">💬 WhatsApp Bot Pairing</h3>
+                <div class="space-y-3">
+                    <input type="text" id="wa-phone" placeholder="Phone Number with Country Code" class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white">
+                    <button onclick="pairWhatsApp()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 btn-3d ios-bold text-xs rounded-xl text-white">Generate Pair Code 🔗</button>
                 </div>
                 <div id="wa-result" class="text-xs text-emerald-300 font-mono"></div>
             </div>
 
             <div class="glass-card p-6 rounded-3xl space-y-4">
-                <h3 class="text-base ios-bold text-blue-400 flex items-center gap-2">🤖 Telegram Multi-Bot Manager (Unnatv5)</h3>
+                <h3 class="text-base ios-bold text-blue-400">🤖 Telegram Multi-Bot Manager (Unnatv5)</h3>
                 <div class="space-y-3">
                     <textarea id="tg-tokens" rows="2" placeholder="Bot Tokens separated by comma (,)" class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white"></textarea>
                     <input type="text" id="tg-owner" placeholder="Owner Telegram User ID" class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white">
@@ -95,14 +98,20 @@
 
     </div>
 
-    <!-- ADD ACCOUNT POPUP MODAL -->
-    <div id="add-account-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/9oidal p-4 hidden">
-        <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-pink-500/30 space-y-4">
-            <h3 class="text-lg ios-bold text-pink-400">Add Instagram Account</h3>
-            <input type="text" id="popup-session-id" placeholder="Paste sessionid cookie here" class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-400">
-            <div class="flex gap-2">
+    <!-- SEPARATE POPUP MODAL FOR ADDING ACCOUNT -->
+    <div id="add-account-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
+        <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-pink-500/40 space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg ios-bold text-pink-400">Connect Instagram Account</h3>
+                <button onclick="closeAddAccountModal()" class="text-gray-400 hover:text-white text-sm font-bold">✕</button>
+            </div>
+            <div class="space-y-3">
+                <label class="text-xs text-gray-300 block">Paste your Instagram sessionid cookie:</label>
+                <input type="text" id="popup-session-id" placeholder="sessionid=..." class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-400">
+            </div>
+            <div class="flex gap-3 pt-2">
                 <button onclick="submitAddAccount()" class="flex-1 py-3 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">Connect & Fetch GC</button>
-                <button onclick="closeAddAccountModal()" class="px-4 py-3 bg-gray-700 ios-bold text-xs rounded-xl text-white">Cancel</button>
+                <button onclick="closeAddAccountModal()" class="px-5 py-3 bg-gray-800 hover:bg-gray-700 ios-bold text-xs rounded-xl text-gray-300">Cancel</button>
             </div>
         </div>
     </div>
@@ -161,7 +170,6 @@
             const data = await res.json();
 
             if(data.success) {
-                // Fetch mock GCs
                 const gcRes = await fetch("/api/insta/fetch-gcs", { method: "POST", body: fd });
                 const gcData = await gcRes.json();
                 
@@ -183,27 +191,43 @@
         function renderAccounts() {
             const container = document.getElementById("accounts-container");
             if(activeAccounts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 italic">No Instagram accounts added yet. Click "+ Add Account" to start.</p>`;
+                container.innerHTML = `<p class="text-xs text-gray-400 italic">No Instagram accounts connected yet. Click "+ Add Account" above.</p>`;
                 return;
             }
 
             let html = "";
             activeAccounts.forEach((acc, idx) => {
                 html += `
-                    <div class="bg-black/40 border border-cyan-500/30 p-4 rounded-2xl space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs ios-bold text-cyan-300">👤 @${acc.username}</span>
-                            <span class="text-[10px] bg-cyan-950 text-cyan-400 px-2 py-1 rounded-lg">Status: ${acc.status}</span>
+                    <div class="bg-black/50 border border-cyan-500/30 p-5 rounded-2xl space-y-4">
+                        <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                            <span class="text-sm ios-bold text-cyan-300">👤 Username: @${acc.username}</span>
+                            <span class="text-[10px] bg-cyan-950 text-cyan-400 px-3 py-1 rounded-lg font-bold">Status: ${acc.status}</span>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <input type="text" id="spam-text-${idx}" placeholder="Custom Spam Text" class="bg-black/60 border border-gray-700 rounded-xl p-2.5 text-xs text-white">
-                            <input type="number" id="spam-delay-${idx}" placeholder="Spam Random Delay (sec)" class="bg-black/60 border border-gray-700 rounded-xl p-2.5 text-xs text-white">
-                            <input type="text" id="nc-text-${idx}" placeholder="Custom NC Text" class="bg-black/60 border border-gray-700 rounded-xl p-2.5 text-xs text-white">
-                            <input type="number" id="nc-delay-${idx}" placeholder="Multi NC Random Delay (sec)" class="bg-black/60 border border-gray-700 rounded-xl p-2.5 text-xs text-white">
+                        
+                        <!-- SEPARATE LINES FOR EACH INPUT -->
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-[11px] text-gray-400 block mb-1">Custom Spam Text:</label>
+                                <input type="text" id="spam-text-${idx}" placeholder="Enter spam message..." class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-gray-400 block mb-1">Spam Random Delay (Seconds):</label>
+                                <input type="number" id="spam-delay-${idx}" placeholder="e.g. 3" class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-gray-400 block mb-1">Custom NC Text:</label>
+                                <input type="text" id="nc-text-${idx}" placeholder="Enter name changer text..." class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-gray-400 block mb-1">Multi NC Random Delay (Seconds):</label>
+                                <input type="number" id="nc-delay-${idx}" placeholder="e.g. 5" class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
+                            </div>
                         </div>
-                        <div class="flex gap-2 pt-1">
-                            <button onclick="saveAndToggleTask(${idx}, 'start')" class="flex-1 py-2 bg-emerald-600 btn-3d ios-bold text-xs rounded-xl text-white">Save & Start 🚀</button>
-                            <button onclick="saveAndToggleTask(${idx}, 'stop')" class="flex-1 py-2 bg-rose-600 btn-3d ios-bold text-xs rounded-xl text-white">Stop 🛑</button>
+
+                        <!-- START / STOP BUTTONS -->
+                        <div class="flex gap-3 pt-2">
+                            <button onclick="saveAndToggleTask(${idx}, 'start')" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 btn-3d ios-bold text-xs rounded-xl text-white">Save & Start 🚀</button>
+                            <button onclick="saveAndToggleTask(${idx}, 'stop')" class="flex-1 py-3 bg-rose-600 hover:bg-rose-500 btn-3d ios-bold text-xs rounded-xl text-white">Stop 🛑</button>
                         </div>
                     </div>
                 `;
@@ -235,11 +259,13 @@
 
         async function createGC() {
             const name = document.getElementById("new-gc-name").value;
+            if(!name) { alert("Enter GC name!"); return; }
             alert(`New GC Created Successfully: ${name}`);
         }
 
         async function pairWhatsApp() {
             const phone = document.getElementById("wa-phone").value;
+            if(!phone) { alert("Enter phone number!"); return; }
             const fd = new URLSearchParams();
             fd.append("phone", phone);
             const res = await fetch("/api/whatsapp/pair", { method: "POST", body: fd });
@@ -250,6 +276,7 @@
         async function deployTelegram() {
             const tokens = document.getElementById("tg-tokens").value;
             const owner = document.getElementById("tg-owner").value;
+            if(!tokens) { alert("Enter bot tokens!"); return; }
             const fd = new URLSearchParams();
             fd.append("tokens", tokens);
             fd.append("owner_id", owner);
