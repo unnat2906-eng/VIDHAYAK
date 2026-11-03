@@ -4,6 +4,7 @@ import subprocess
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+import httpx
 
 app = FastAPI(title="UNNAT | SONA PANEL")
 templates = Jinja2Templates(directory="templates")
@@ -22,11 +23,10 @@ def log_event(message: str):
     if len(REALTIME_LOGS) > 100:
         REALTIME_LOGS.pop()
 
-# --- FIXED ROUTE WITH CLEAN DICT CONTEXT ---
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    context = {"request": request}
-    return templates.TemplateResponse("index.html", context)
+    # Modern Jinja2 rendering format
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/api/login")
 async def api_login(username: str = Form(...), password: str = Form(...)):
