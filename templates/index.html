@@ -43,54 +43,67 @@
             <div class="bg-cyan-950/60 border border-cyan-500/40 px-4 py-2 rounded-2xl text-xs text-cyan-300 ios-bold">LIVE 24/7 ⚡</div>
         </header>
 
-        <!-- INSTAGRAM MULTI-SESSION MODULE -->
-        <div class="glass-card p-6 rounded-3xl space-y-6">
+        <!-- ================= INSTAGRAM SECTION (Vertical & Multi-Session) ================= -->
+        <div class="glass-card p-6 rounded-3xl space-y-6 border border-cyan-500/30">
             <div class="flex justify-between items-center border-b border-gray-800 pb-4">
                 <div>
-                    <h3 class="text-base ios-bold text-cyan-400">📸 Instagram Multi-Session Hub</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Manage multiple accounts, custom spam, and multi-NC loops.</p>
+                    <h3 class="text-lg ios-bold text-cyan-400">📸 Instagram Automation Hub</h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Multi-session support with custom spam, delays & name changer.</p>
                 </div>
-                <button onclick="openAddAccountModal()" class="px-5 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">+ Add Account</button>
+                <button type="button" onclick="openAddAccountModal()" class="px-5 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">+ Add Account</button>
             </div>
             
-            <!-- CONNECTED ACCOUNTS CONTAINER (SEPARATE LINES) -->
+            <!-- Connected Accounts Vertical List -->
             <div id="accounts-container" class="space-y-4">
                 <p class="text-xs text-gray-400 italic">No Instagram accounts connected yet. Click "+ Add Account" above.</p>
             </div>
         </div>
 
-        <!-- OWNER ONLY SECTIONS -->
+        <!-- ================= OWNER EXCLUSIVE SECTIONS ================= -->
         <div id="owner-exclusive-section" class="space-y-6 hidden">
+            
+            <!-- GC CREATOR SECTION -->
             <div class="glass-card p-6 rounded-3xl space-y-4 border border-amber-500/30">
                 <h3 class="text-base ios-bold text-amber-400">👑 Owner GC Creator & Multi-GC Hub</h3>
                 <div class="space-y-3">
-                    <input type="text" id="new-gc-name" placeholder="Enter New GC Name" class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white">
-                    <button onclick="createGC()" class="w-full py-3 bg-amber-600 btn-3d ios-bold text-xs rounded-xl text-white">Create GC ➕</button>
+                    <label class="text-[11px] text-gray-400 block">Create New Group Chat:</label>
+                    <input type="text" id="new-gc-name" placeholder="Enter New GC Name" class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400">
+                    <button type="button" onclick="createGC()" class="w-full py-3 bg-amber-600 hover:bg-amber-500 btn-3d ios-bold text-xs rounded-xl text-white">Create GC ➕</button>
                 </div>
                 <div id="gc-list-container" class="text-xs text-gray-300 font-mono pt-2">Active GCs: VIP Spam Zone, Elite Changers, Unnat Squad</div>
             </div>
 
-            <div class="glass-card p-6 rounded-3xl space-y-4">
-                <h3 class="text-base ios-bold text-emerald-400">💬 WhatsApp Bot Pairing</h3>
+            <!-- ================= WHATSAPP SECTION ================= -->
+            <div class="glass-card p-6 rounded-3xl space-y-4 border border-emerald-500/30">
+                <h3 class="text-base ios-bold text-emerald-400">💬 WhatsApp Bot Section</h3>
                 <div class="space-y-3">
-                    <input type="text" id="wa-phone" placeholder="Phone Number with Country Code" class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white">
-                    <button onclick="pairWhatsApp()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 btn-3d ios-bold text-xs rounded-xl text-white">Generate Pair Code 🔗</button>
+                    <label class="text-[11px] text-gray-400 block">WhatsApp Phone Number (with Country Code):</label>
+                    <input type="text" id="wa-phone" placeholder="e.g. 919876543210" class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400">
+                    <button type="button" onclick="pairWhatsApp()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 btn-3d ios-bold text-xs rounded-xl text-white">Generate Pair Code 🔗</button>
                 </div>
-                <div id="wa-result" class="text-xs text-emerald-300 font-mono"></div>
+                <div id="wa-result" class="text-xs text-emerald-300 font-mono pt-1"></div>
             </div>
 
-            <div class="glass-card p-6 rounded-3xl space-y-4">
+            <!-- ================= TELEGRAM SECTION ================= -->
+            <div class="glass-card p-6 rounded-3xl space-y-4 border border-blue-500/30">
                 <h3 class="text-base ios-bold text-blue-400">🤖 Telegram Multi-Bot Manager (Unnatv5)</h3>
                 <div class="space-y-3">
-                    <textarea id="tg-tokens" rows="2" placeholder="Bot Tokens separated by comma (,)" class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white"></textarea>
-                    <input type="text" id="tg-owner" placeholder="Owner Telegram User ID" class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white">
-                    <button onclick="deployTelegram()" class="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-600 btn-3d ios-bold text-xs rounded-xl text-white">Deploy 24/7 Daemons 🚀</button>
+                    <div>
+                        <label class="text-[11px] text-gray-400 block mb-1">Bot Tokens (separated by comma):</label>
+                        <textarea id="tg-tokens" rows="2" placeholder="TOKEN1, TOKEN2..." class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-400"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-[11px] text-gray-400 block mb-1">Owner Telegram User ID:</label>
+                        <input type="text" id="tg-owner" placeholder="Owner User ID" class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-400">
+                    </div>
+                    <button type="button" onclick="deployTelegram()" class="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:opacity-90 btn-3d ios-bold text-xs rounded-xl text-white">Deploy 24/7 Daemons 🚀</button>
                 </div>
-                <div id="tg-status" class="text-xs text-blue-300"></div>
+                <div id="tg-status" class="text-xs text-blue-300 pt-1"></div>
             </div>
+
         </div>
 
-        <!-- REAL-TIME LOGS -->
+        <!-- ================= REAL-TIME TERMINAL LOGS ================= -->
         <div class="glass-card p-6 rounded-3xl space-y-3">
             <h3 class="text-sm ios-bold uppercase text-gray-300">Real-Time Terminal Logs (Send / Failed)</h3>
             <div id="realtime-logs" class="bg-black/90 p-4 rounded-2xl border border-gray-800 font-mono text-xs text-emerald-400 h-44 overflow-y-auto"></div>
@@ -98,20 +111,20 @@
 
     </div>
 
-    <!-- SEPARATE POPUP MODAL FOR ADDING ACCOUNT -->
-    <div id="add-account-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
+    <!-- ADD INSTAGRAM ACCOUNT MODAL -->
+    <div id="add-account-modal" class="fixed inset-0 z-50 items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
         <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-pink-500/40 space-y-5 shadow-2xl">
             <div class="flex justify-between items-center">
                 <h3 class="text-lg ios-bold text-pink-400">Connect Instagram Account</h3>
-                <button onclick="closeAddAccountModal()" class="text-gray-400 hover:text-white text-sm font-bold">✕</button>
+                <button type="button" onclick="closeAddAccountModal()" class="text-gray-400 hover:text-white text-sm font-bold">✕</button>
             </div>
             <div class="space-y-3">
                 <label class="text-xs text-gray-300 block">Paste your Instagram sessionid cookie:</label>
                 <input type="text" id="popup-session-id" placeholder="sessionid=..." class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-400">
             </div>
             <div class="flex gap-3 pt-2">
-                <button onclick="submitAddAccount()" class="flex-1 py-3 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">Connect & Fetch GC</button>
-                <button onclick="closeAddAccountModal()" class="px-5 py-3 bg-gray-800 hover:bg-gray-700 ios-bold text-xs rounded-xl text-gray-300">Cancel</button>
+                <button type="button" onclick="submitAddAccount()" class="flex-1 py-3 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">Connect & Fetch</button>
+                <button type="button" onclick="closeAddAccountModal()" class="px-5 py-3 bg-gray-800 hover:bg-gray-700 ios-bold text-xs rounded-xl text-gray-300">Cancel</button>
             </div>
         </div>
     </div>
@@ -123,6 +136,7 @@
         if(isIOS) badge.classList.add("ios-bold");
 
         let activeAccounts = [];
+        let currentUserRole = "user";
 
         async function handleLogin(e) {
             e.preventDefault();
@@ -131,24 +145,30 @@
             const fd = new URLSearchParams();
             fd.append("username", username);
             fd.append("password", password);
-            const res = await fetch("/api/login", { method: "POST", body: fd });
-            const data = await res.json();
-            if(data.success) {
-                document.getElementById("login-modal").style.display = "none";
-                document.getElementById("dashboard").style.display = "block";
-                
-                if(data.role === "owner") {
-                    document.getElementById("user-role-badge").innerText = "Role: Owner (Full Access)";
-                    document.getElementById("owner-exclusive-section").style.display = "block";
+            
+            try {
+                const res = await fetch("/api/login", { method: "POST", body: fd });
+                const data = await res.json();
+                if(data.success) {
+                    currentUserRole = data.role;
+                    document.getElementById("login-modal").style.display = "none";
+                    document.getElementById("dashboard").style.display = "block";
+                    
+                    if(data.role === "owner") {
+                        document.getElementById("user-role-badge").innerText = "Role: Owner (Full Access)";
+                        document.getElementById("owner-exclusive-section").style.display = "block";
+                    } else {
+                        document.getElementById("user-role-badge").innerText = "Role: User (Instagram Automation)";
+                        document.getElementById("owner-exclusive-section").style.display = "none";
+                    }
+                    setInterval(fetchLogs, 2000);
                 } else {
-                    document.getElementById("user-role-badge").innerText = "Role: User (Instagram Automation)";
-                    document.getElementById("owner-exclusive-section").style.display = "none";
+                    const err = document.getElementById("login-error");
+                    err.innerText = data.message;
+                    err.style.display = "block";
                 }
-                setInterval(fetchLogs, 2000);
-            } else {
-                const err = document.getElementById("login-error");
-                err.innerText = data.message;
-                err.style.display = "block";
+            } catch(err) {
+                alert("Login request failed: " + err);
             }
         }
 
@@ -161,30 +181,37 @@
         }
 
         async function submitAddAccount() {
-            const sessionId = document.getElementById("popup-session-id").value;
-            if(!sessionId) { alert("Please enter session ID!"); return; }
+            const sessionIdInput = document.getElementById("popup-session-id").value.trim();
+            if(!sessionIdInput) { alert("Please enter session ID!"); return; }
+
+            let sessionId = sessionIdInput;
+            if(sessionIdInput.includes("sessionid=")) {
+                const match = sessionIdInput.match(/sessionid=([^;]+)/);
+                if(match) sessionId = match[1];
+            }
 
             const fd = new URLSearchParams();
             fd.append("session_id", sessionId);
-            const res = await fetch("/api/insta/connect-session", { method: "POST", body: fd });
-            const data = await res.json();
 
-            if(data.success) {
-                const gcRes = await fetch("/api/insta/fetch-gcs", { method: "POST", body: fd });
-                const gcData = await gcRes.json();
-                
-                const accountObj = {
-                    sessionId: sessionId,
-                    username: data.username,
-                    gcs: gcData.gcs || [],
-                    status: "Stopped"
-                };
-                activeAccounts.push(accountObj);
-                renderAccounts();
-                closeAddAccountModal();
-                document.getElementById("popup-session-id").value = "";
-            } else {
-                alert(data.message);
+            try {
+                const res = await fetch("/api/insta/connect-session", { method: "POST", body: fd });
+                const data = await res.json();
+
+                if(data.success) {
+                    const accountObj = {
+                        sessionId: sessionId,
+                        username: data.username,
+                        status: "Stopped"
+                    };
+                    activeAccounts.push(accountObj);
+                    renderAccounts();
+                    closeAddAccountModal();
+                    document.getElementById("popup-session-id").value = "";
+                } else {
+                    alert(data.message || "Invalid Session ID!");
+                }
+            } catch(e) {
+                alert("Connection error: " + e);
             }
         }
 
@@ -204,7 +231,6 @@
                             <span class="text-[10px] bg-cyan-950 text-cyan-400 px-3 py-1 rounded-lg font-bold">Status: ${acc.status}</span>
                         </div>
                         
-                        <!-- SEPARATE LINES FOR EACH INPUT -->
                         <div class="space-y-3">
                             <div>
                                 <label class="text-[11px] text-gray-400 block mb-1">Custom Spam Text:</label>
@@ -224,10 +250,9 @@
                             </div>
                         </div>
 
-                        <!-- START / STOP BUTTONS -->
                         <div class="flex gap-3 pt-2">
-                            <button onclick="saveAndToggleTask(${idx}, 'start')" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 btn-3d ios-bold text-xs rounded-xl text-white">Save & Start 🚀</button>
-                            <button onclick="saveAndToggleTask(${idx}, 'stop')" class="flex-1 py-3 bg-rose-600 hover:bg-rose-500 btn-3d ios-bold text-xs rounded-xl text-white">Stop 🛑</button>
+                            <button type="button" onclick="saveAndToggleTask(${idx}, 'start')" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 btn-3d ios-bold text-xs rounded-xl text-white">Save & Start 🚀</button>
+                            <button type="button" onclick="saveAndToggleTask(${idx}, 'stop')" class="flex-1 py-3 bg-rose-600 hover:bg-rose-500 btn-3d ios-bold text-xs rounded-xl text-white">Stop 🛑</button>
                         </div>
                     </div>
                 `;
@@ -242,12 +267,13 @@
             const ncText = document.getElementById(`nc-text-${idx}`).value;
             const ncDelay = document.getElementById(`nc-delay-${idx}`).value;
 
+            const fd = new URLSearchParams();
+            fd.append("task_type", "multisession_automation");
+            fd.append("session_id", acc.sessionId);
+            fd.append("target_data", `${spamText}|${spamDelay}|${ncText}|${ncDelay}`);
+
             if(action === 'start') {
                 acc.status = "Running 24/7";
-                const fd = new URLSearchParams();
-                fd.append("task_type", "multisession_spam");
-                fd.append("session_id", acc.sessionId);
-                fd.append("target_data", `${spamText}|${spamDelay}|${ncText}|${ncDelay}`);
                 await fetch("/api/insta/start-task", { method: "POST", body: fd });
                 alert(`Account @${acc.username} tasks saved and started successfully!`);
             } else {
@@ -258,39 +284,58 @@
         }
 
         async function createGC() {
-            const name = document.getElementById("new-gc-name").value;
-            if(!name) { alert("Enter GC name!"); return; }
+            const name = document.getElementById("new-gc-name").value.trim();
+            if(!name) { alert("Please enter GC name!"); return; }
             alert(`New GC Created Successfully: ${name}`);
+            document.getElementById("new-gc-name").value = "";
         }
 
         async function pairWhatsApp() {
-            const phone = document.getElementById("wa-phone").value;
-            if(!phone) { alert("Enter phone number!"); return; }
+            const phone = document.getElementById("wa-phone").value.trim();
+            if(!phone) { alert("Please enter phone number!"); return; }
             const fd = new URLSearchParams();
             fd.append("phone", phone);
             const res = await fetch("/api/whatsapp/pair", { method: "POST", body: fd });
             const data = await res.json();
-            document.getElementById("wa-result").innerText = `Pairing Code: ${data.pair_code}`;
+            document.getElementById("wa-result").innerText = `Pairing Code Generated: ${data.pair_code}`;
         }
 
         async function deployTelegram() {
-            const tokens = document.getElementById("tg-tokens").value;
-            const owner = document.getElementById("tg-owner").value;
-            if(!tokens) { alert("Enter bot tokens!"); return; }
+            const tokens = document.getElementById("tg-tokens").value.trim();
+            const owner = document.getElementById("tg-owner").value.trim();
+            if(!tokens || !owner) { alert("Please enter bot tokens and owner ID!"); return; }
+            
             const fd = new URLSearchParams();
             fd.append("tokens", tokens);
             fd.append("owner_id", owner);
-            const res = await fetch("/api/telegram/deploy", { method: "POST", body: fd });
-            const data = await res.json();
-            document.getElementById("tg-status").innerText = `Successfully deployed ${data.active_count} bot nodes!`;
+            
+            try {
+                const res = await fetch("/api/telegram/deploy", { method: "POST", body: fd });
+                const data = await res.json();
+                if(data.success) {
+                    document.getElementById("tg-status").innerText = `Successfully deployed ${data.active_count} Telegram bot daemons running 24/7!`;
+                } else {
+                    alert("Deployment failed.");
+                }
+            } catch(e) {
+                alert("Error deploying Telegram bots: " + e);
+            }
         }
 
         async function fetchLogs() {
-            const res = await fetch("/api/logs");
-            const data = await res.json();
-            let html = "";
-            data.logs.forEach(l => html += `<div>> ${l}</div>`);
-            document.getElementById("realtime-logs").innerHTML = html;
+            try {
+                const res = await fetch("/api/logs");
+                const data = await res.json();
+                let html = "";
+                if(data.logs && data.logs.length > 0) {
+                    data.logs.forEach(l => html += `<div>> ${l}</div>`);
+                } else {
+                    html = "<div>> System active. Ready for tasks...</div>";
+                }
+                document.getElementById("realtime-logs").innerHTML = html;
+            } catch(e) {
+                console.error("Failed fetching logs");
+            }
         }
     </script>
 </body>
