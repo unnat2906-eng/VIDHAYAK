@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNNAT | SONA PANEL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050509; color: #f3f4f6; min-height: 100vh; }
+        .ios-bold { font-weight: 800; letter-spacing: -0.025em; }
+        .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
+        <div class="glass-card max-w-md w-full p-8 rounded-3xl text-center border border-cyan-500/30 shadow-2xl">
+            <h1 class="text-3xl ios-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500 mb-1">UNNAT | SONA</h1>
+            <p class="text-xs text-pink-400 tracking-widest font-bold mb-6">PANEL ❤</p>
+            <div id="device-badge" class="mb-6 py-2 px-4 rounded-xl bg-black/60 border border-gray-800 text-xs text-cyan-300 ios-bold">Detecting device...</div>
+            <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+                <input type="text" id="username" placeholder="Username" required class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-cyan-400">
+                <input type="password" id="password" placeholder="Password" required class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-cyan-400">
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 ios-bold text-sm rounded-xl text-white">ENTER 🚀</button>
+            </form>
+            <p id="login-error" class="text-pink-400 text-xs mt-3 hidden"></p>
+        </div>
+    </div>
+    <div id="dashboard" class="max-w-7xl mx-auto space-y-6 hidden">
+        <header class="glass-card p-6 rounded-3xl flex justify-between items-center">
+            <h1 class="text-2xl ios-bold text-cyan-400">UNNAT | SONA PANEL ❤</h1>
+            <div id="device-status-bar" class="bg-black/50 px-4 py-2 rounded-2xl border border-gray-800 text-xs text-cyan-300">Active</div>
+        </header>
+        <div class="glass-card p-6 rounded-3xl space-y-3">
+            <h3 class="text-sm ios-bold uppercase text-gray-300">Real-Time Logs</h3>
+            <div id="realtime-logs" class="bg-black/90 p-4 rounded-2xl border border-gray-800 font-mono text-xs text-emerald-400 h-44 overflow-y-auto"></div>
+        </div>
+    </div>
+    <script>
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const badge = document.getElementById("device-badge");
+        badge.innerText = isIOS ? "iOS Device Connected (Bold Mode)" : "Desktop / Android Connected";
+        if(isIOS) badge.classList.add("ios-bold");
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const fd = new URLSearchParams();
+            fd.append("username", document.getElementById("username").value);
+            fd.append("password", document.getElementById("password").value);
+            const res = await fetch("/api/login", { method: "POST", body: fd });
+            const data = await res.json();
+            if(data.success) {
+                document.getElementById("login-modal").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+                setInterval(fetchLogs, 2000);
+            } else {
+                const err = document.getElementById("login-error");
+                err.innerText = data.message;
+                err.style.display = "block";
+            }
+        }
+        async function fetchLogs() {
+            const res = await fetch("/api/logs");
+            const data = await res.json();
+            let html = "";
+            data.logs.forEach(l => html += `<div>> ${l}</div>`);
+            document.getElementById("realtime-logs").innerHTML = html;
+        }
+    </script>
+</body>
+</html>
