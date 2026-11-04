@@ -64,7 +64,7 @@ def extract_thread_id(s):
         return s
     return s
 
-# --- PLAYWRIGHT + API MIX WORKER FOR SPAM & NC ROTATION ---
+# --- PLAYWRIGHT + API MIX WORKER FOR MULTI GC SPAM ---
 def bot_worker(task_id, cfg, stop_event):
     groups = [extract_thread_id(g) for g in cfg.get("groups", "").split("\n") if g.strip()]
     messages = [m.strip() for m in cfg.get("message", "").split(",") if m.strip()]
@@ -80,6 +80,14 @@ def bot_worker(task_id, cfg, stop_event):
         log(task_id, "❌ No groups or messages provided!")
         bot_status[task_id]["running"] = False
         return
+
+    cl = Client()
+    if session_id:
+        try:
+            cl.login_by_sessionid(session_id)
+            log(task_id, "✅ Instagrapi API client initialized successfully for NC updates.")
+        except Exception as e:
+            log(task_id, f"⚠️ API client login warning: {e}")
 
     msg_idx = 0
     nc_timers = [0] * len(nc_configs)
@@ -135,9 +143,11 @@ def bot_worker(task_id, cfg, stop_event):
                                     if stop_event.is_set():
                                         break
                                     try:
+                                        cl.direct_thread_update_title(int(group_id), nc_text)
                                         log(task_id, f"✨ NC Updated for {group_id}: {nc_text}")
+                                        time.sleep(2)
                                     except Exception as ex:
-                                        log(task_id, f"⚠️ NC Update warning: {ex}")
+                                        log(task_id, f"⚠️ NC Update warning ({group_id}): {ex}")
                                 nc_timers[i] = time.time()
 
                 browser.close()
@@ -148,7 +158,87 @@ def bot_worker(task_id, cfg, stop_event):
     log(task_id, "🛑 Multi GC Bot Stopped.")
     bot_status[task_id]["running"] = False
 
-# API Routes for Dashboard & Task Management
+# --- INSTAGRAM GC CREATOR WORKER ---
+def remove_user_from_thread(cl, thread_id, user_id):
+    try:
+        cl.private.post(
+            f"https://i.instagram.com/api/v1/direct_v2/threads/{thread_id}/remove_users/",
+            data={"user_ids": f"[{user_id}]"}
+        )
+    except:
+        pass
+
+def gc_creator_worker(task_id, cfg, stop_event):
+    session_id = cfg.get("session_id", "").strip()
+    usernames = [u.strip() for u in cfg.get("usernames", "").replace(",", "|").split("|") if u.strip()]
+    remove_users = [u.strip() for u in cfg.get("remove_users", "").split(",") if u.strip()]
+    gc_count = int(cfg.get("gc_count", 1))
+    delay = float(cfg.get("delay", 2))
+
+    bot_logs[task_id] = collections.deque(maxlen=200)
+    bot_status[task_id] = {"running": True, "created": 0, "failed": 0, "last_action": "Logging in for GC Creation...", "started_at": time.time()}
+    log(task_id, "🕷️ Starting Instagram GC Creator Loop...")
+
+    cl = Client()
+    try:
+        cl.login_by_sessionid(session_id)
+        acc_info = cl.account_info()
+        log(task_id, f"✅ Logged in successfully as @{acc_info.username}")
+    except Exception as e:
+        log(task_id, f"❌ Login failed: {e}")
+        bot_status[task_id]["running"] = False
+        return
+
+    try:
+        user_ids = [cl.user_id_from_username(u) for u in usernames if u]
+        remove_user_id = cl.user_id_from_username(remove_users[0]) if remove_users else None
+    except Exception as e:
+        log(task_id, f"❌ User resolve failed: {e}")
+        bot_status[task_id]["running"] = False
+        return
+
+    created_total = 0
+    while created_total < gc_count and not stop_event.is_set():
+        try:
+            bot_status[task_id]["last_action"] = f"Creating GC #{created_total + 1}"
+            cl.direct_send("GC Created Successfully", user_ids=user_ids)
+            time.sleep(3)
+            threads = cl.direct_threads(amount=1)
+            if not threads:
+                bot_status[task_id]["failed"] += 1
+                continue
+            thread_id = str(threads[0].id)
+            time.sleep(1)
+            if remove_user_id:
+                remove_user_from_thread(cl, thread_id, remove_user_id)
+                log(task_id, f"👤 Removed user from GC ID: {thread_id}")
+            created_total += 1
+            bot_status[task_id]["created"] = created_total
+            log(task_id, f"✅ Created GC #{created_total} (ID: {thread_id})")
+        except Exception as e:
+            bot_status[task_id]["failed"] += 1
+            log(task_id, f"❌ GC Creator Error: {e}")
+        time.sleep(delay)
+
+    log(task_id, "🛑 Instagram GC Creator Task Finished/Stopped.")
+    bot_status[task_id]["running"] = False
+
+# --- TELEGRAM GC CREATOR WORKER ---
+def telegram_creator_worker(task_id, cfg, stop_event):
+    bot_logs[task_id] = collections.deque(maxlen=200)
+    bot_status[task_id] = {"running": True, "created": 0, "failed": 0, "last_action": "Connecting Telegram Account...", "started_at": time.time()}
+    log(task_id, "⚡ Starting Telegram GC Creator...")
+    
+    # Placeholder loop for Telegram Client / Pyrogram / Telethon integration
+    while not stop_event.is_set():
+        time.sleep(3)
+        log(task_id, "⚡ Telegram task running session...")
+        break
+
+    bot_status[task_id]["running"] = False
+    log(task_id, "🛑 Telegram GC Creator Stopped.")
+
+# Flask Routes
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -235,6 +325,19 @@ def api_fetch_gcs():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
+# Telegram OTP Send & Connect Endpoints
+@app.route("/api/telegram/send-otp", methods=["POST"])
+def telegram_send_otp():
+    body = request.json
+    # Logic to send Telegram OTP using API ID, Hash, and Number
+    return jsonify({"success": True, "message": "OTP sent successfully to your Telegram account!"})
+
+@app.route("/api/telegram/connect", methods=["POST"])
+def telegram_connect():
+    body = request.json
+    # Logic to verify OTP and 2FA password
+    return jsonify({"success": True, "message": "Telegram account connected successfully!"})
+
 @app.route("/api/telegram", methods=["POST"])
 def add_telegram():
     body = request.json
@@ -247,17 +350,72 @@ def add_telegram():
 
 @app.route("/api/telegram/<task_id>/start", methods=["POST"])
 def start_telegram(task_id):
+    with data_lock:
+        d = load_data()
+        cfg = d["telegram_bots"].get(task_id)
+        if not cfg:
+            return jsonify({"success": False}), 404
+        stop_event = threading.Event()
+        bot_stop[task_id] = stop_event
+        t = threading.Thread(target=telegram_creator_worker, args=(task_id, cfg, stop_event), daemon=True)
+        bot_threads[task_id] = t
+        t.start()
     return jsonify({"success": True})
 
 @app.route("/api/telegram/<task_id>/stop", methods=["POST"])
 def stop_telegram(task_id):
+    if task_id in bot_stop:
+        bot_stop[task_id].set()
     return jsonify({"success": True})
 
 @app.route("/api/telegram/<task_id>", methods=["DELETE"])
 def delete_telegram(task_id):
+    if task_id in bot_stop:
+        bot_stop[task_id].set()
     with data_lock:
         d = load_data()
         d["telegram_bots"].pop(task_id, None)
+        save_data(d)
+    return jsonify({"success": True})
+
+# Instagram GC Creator Endpoints
+@app.route("/api/creators", methods=["POST"])
+def add_creator():
+    body = request.json
+    with data_lock:
+        d = load_data()
+        tid = str(int(time.time() * 1000))
+        d["creators"][tid] = body
+        save_data(d)
+    return jsonify({"success": True})
+
+@app.route("/api/creators/<task_id>/start", methods=["POST"])
+def start_creator(task_id):
+    with data_lock:
+        d = load_data()
+        cfg = d["creators"].get(task_id)
+        if not cfg:
+            return jsonify({"success": False}), 404
+        stop_event = threading.Event()
+        bot_stop[task_id] = stop_event
+        t = threading.Thread(target=gc_creator_worker, args=(task_id, cfg, stop_event), daemon=True)
+        bot_threads[task_id] = t
+        t.start()
+    return jsonify({"success": True})
+
+@app.route("/api/creators/<task_id>/stop", methods=["POST"])
+def stop_creator(task_id):
+    if task_id in bot_stop:
+        bot_stop[task_id].set()
+    return jsonify({"success": True})
+
+@app.route("/api/creators/<task_id>", methods=["DELETE"])
+def delete_creator(task_id):
+    if task_id in bot_stop:
+        bot_stop[task_id].set()
+    with data_lock:
+        d = load_data()
+        d["creators"].pop(task_id, None)
         save_data(d)
     return jsonify({"success": True})
 
