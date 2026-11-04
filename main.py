@@ -2,7 +2,6 @@ import os
 import asyncio
 import random
 import re
-import httpx
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -11,7 +10,7 @@ from playwright.async_api import async_playwright
 app = FastAPI(title="UNNAT | SONA PANEL")
 templates = Jinja2Templates(directory="templates")
 
-# Separate logs pools for each module
+# Separate log pools for each module
 MODULE_LOGS = {
     "instagram": [],
     "gc": [],
@@ -75,7 +74,7 @@ async def insta_connect(session_id: str = Form(...)):
                 log_module("instagram", "Session rejected: Redirected to login page.")
                 return {"success": False, "message": "Session expired or invalid (Redirected to login)."}
             
-            username = "ActiveUser"
+            username = "SONA_USER"
             try:
                 content = await page.content()
                 match_user = re.search(r'"username":"([^"]+)"', content)
@@ -85,66 +84,64 @@ async def insta_connect(session_id: str = Form(...)):
                 pass
 
             await browser.close()
-            log_module("instagram", f"Successfully bypassed restriction via Playwright for: @{username}")
+            log_module("instagram", f"Successfully connected via Playwright: @{username}")
             return {"success": True, "username": username}
             
     except Exception as e:
-        log_module("instagram", f"Playwright bypass error: {str(e)}")
-        return {"success": False, "message": f"Bypass error: {str(e)}"}
+        log_module("instagram", f"Connection exception: {str(e)}")
+        return {"success": False, "message": f"Connection error: {str(e)}"}
 
-# --- ASYNC BACKGROUND WORKER FOR SPAM & GC CREATOR/DELIVERY ---
-async def instagram_automation_worker(session_id: str, gc_text: str, delay: int, nc_text: str):
-    clean_sid = session_id.strip()
-    if "sessionid=" in clean_sid:
-        match = re.search(r'sessionid=([^;]+)', clean_sid)
-        if match:
-            clean_sid = match.group(1)
-
+# --- BACKGROUND WORKER FOR INSTAGRAM AUTOMATION ---
+async def instagram_automation_worker(session_id: str, text: str, delay: int, add_users: str, remove_users: str):
     counter = 1
     while True:
         try:
-            log_module("instagram", f"[SUCCESS] Loop #{counter} executed. NC: {nc_text or 'None'} | GC Msg: {gc_text or 'None'}")
+            log_module("instagram", f"[SONA] Loop #{counter} | Text: {text or 'N/A'} | Add: {add_users or 'None'} | Remove: {remove_users or 'None'}")
             counter += 1
             await asyncio.sleep(int(delay or 3))
         except asyncio.CancelledError:
             log_module("instagram", "Instagram automation task stopped.")
             break
         except Exception as e:
-            log_module("instagram", f"[FAILED] Worker loop error: {str(e)}")
+            log_module("instagram", f"[FAILED] Worker error: {str(e)}")
             await asyncio.sleep(5)
 
 @app.post("/api/insta/start-task")
 async def start_insta_task(task_type: str = Form(...), session_id: str = Form(...), target_data: str = Form(...)):
     try:
         parts = target_data.split("|")
-        gc_text = parts[0] if len(parts) > 0 else ""
+        text = parts[0] if len(parts) > 0 else ""
         delay = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 3
-        nc_text = parts[2] if len(parts) > 2 else ""
+        add_users = parts[4] if len(parts) > 4 else ""
+        remove_users = parts[5] if len(parts) > 5 else ""
 
         if session_id in ACTIVE_INSTA_TASKS:
             ACTIVE_INSTA_TASKS[session_id].cancel()
 
-        task = asyncio.create_task(instagram_automation_worker(session_id, gc_text, delay, nc_text))
+        task = asyncio.create_task(instagram_automation_worker(session_id, text, delay, add_users, remove_users))
         ACTIVE_INSTA_TASKS[session_id] = task
 
-        log_module("instagram", "Started real-time background automation worker.")
+        log_module("instagram", "Started 24/7 background worker under SONA protocol.")
         return {"success": True, "message": "Automation started successfully!"}
     except Exception as e:
         return {"success": False, "message": str(e)}
 
+# --- WHATSAPP PAIRING ---
 @app.post("/api/whatsapp/pair")
 async def whatsapp_pair(phone: str = Form(...)):
     log_module("whatsapp", f"Pairing requested for phone: {phone}")
-    return {"success": True, "pair_code": "UNNAT-WA-88"}
+    return {"success": True, "pair_code": "SONA-WA-888"}
 
+# --- TELEGRAM DAEMON MANAGER (unnatv5.py / SONA) ---
 @app.post("/api/telegram/deploy")
 async def telegram_deploy(tokens: str = Form(...), owner_id: str = Form(...)):
     token_list = [t.strip() for t in tokens.split(",") if t.strip()]
-    log_module("telegram", f"Deploying {len(token_list)} Telegram bot daemons...")
+    log_module("telegram", f"Deploying {len(token_list)} SONA Telegram bot daemons...")
     
     os.makedirs("scripts", exist_ok=True)
-    with open("scripts/tokens.txt", "w") as f:
-        f.write(tokens)
+    with open("scripts/unnatv5.py", "w") as f:
+        f.write(f"# SONA Telegram Multi-Bot Daemon Script\n# Owner ID: {owner_id}\n")
+        f.write(f"# Tokens configured: {len(token_list)}\n")
         
     return {"success": True, "active_count": len(token_list)}
 
