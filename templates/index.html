@@ -32,7 +32,7 @@
     </div>
 
     <!-- MAIN DASHBOARD -->
-    <div id="dashboard" class="max-w-4xl mx-auto space-y-6 hidden">
+    <div id="dashboard" class="max-w-6xl mx-auto space-y-6 hidden">
         
         <!-- HEADER -->
         <header class="glass-card p-6 rounded-3xl flex justify-between items-center border border-cyan-500/20">
@@ -43,83 +43,114 @@
             <div class="bg-cyan-950/60 border border-cyan-500/40 px-4 py-2 rounded-2xl text-xs text-cyan-300 ios-bold">LIVE 24/7 ⚡</div>
         </header>
 
-        <!-- ================= 1. INSTAGRAM SECTION ================= -->
-        <div class="glass-card p-6 rounded-3xl space-y-6 border border-cyan-500/30">
-            <div class="flex justify-between items-center border-b border-gray-800 pb-4">
-                <div>
-                    <h3 class="text-lg ios-bold text-cyan-400">📸 Instagram Automation Hub</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Multi-session support, custom spam, delays & name changer.</p>
+        <!-- GRID LAYOUT FOR SECTIONS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- 1. INSTAGRAM SECTION -->
+            <div class="glass-card p-5 rounded-3xl space-y-4 border border-cyan-500/30">
+                <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                    <h3 class="text-base ios-bold text-cyan-400">📸 INSTAGRAM</h3>
+                    <button type="button" onclick="openAddAccountModal()" class="px-3 py-1.5 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-[10px] rounded-lg text-white">+ Add</button>
                 </div>
-                <button type="button" onclick="openAddAccountModal()" class="px-5 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">+ Add Account</button>
-            </div>
-            
-            <div id="accounts-container" class="space-y-4">
-                <p class="text-xs text-gray-400 italic">No Instagram accounts connected yet. Click "+ Add Account" above.</p>
+                <div id="accounts-container" class="space-y-3">
+                    <p class="text-xs text-gray-400 italic">No account connected.</p>
+                </div>
+                <div class="space-y-1 pt-2">
+                    <h4 class="text-[10px] ios-bold uppercase text-cyan-300">Live Logs</h4>
+                    <div id="logs-instagram" class="bg-black/90 p-2.5 rounded-xl border border-gray-800 font-mono text-[10px] text-cyan-400 h-28 overflow-y-auto"></div>
+                </div>
             </div>
 
-            <!-- Instagram Dedicated Live Logs -->
-            <div class="space-y-2 pt-2">
-                <h4 class="text-xs ios-bold uppercase text-cyan-300">Instagram Live Logs (Send / Failed)</h4>
-                <div id="logs-instagram" class="bg-black/90 p-3 rounded-xl border border-gray-800 font-mono text-[11px] text-cyan-400 h-32 overflow-y-auto"></div>
-            </div>
-        </div>
-
-        <!-- ================= OWNER EXCLUSIVE SECTIONS ================= -->
-        <div id="owner-exclusive-section" class="space-y-6 hidden">
-            
-            <!-- 2. GC CREATOR SECTION -->
-            <div class="glass-card p-6 rounded-3xl space-y-4 border border-amber-500/30">
-                <h3 class="text-base ios-bold text-amber-400">👑 Owner GC Creator Hub</h3>
+            <!-- 2. TELEGRAM SECTION -->
+            <div class="glass-card p-5 rounded-3xl space-y-4 border border-blue-500/30">
+                <div class="border-b border-gray-800 pb-3">
+                    <h3 class="text-base ios-bold text-blue-400">🤖 TELEGRAM</h3>
+                    <p class="text-[10px] text-gray-400">Unnatv5 Multi-Bot Manager</p>
+                </div>
                 <div class="space-y-3">
-                    <label class="text-[11px] text-gray-400 block">Create New Group Chat:</label>
-                    <input type="text" id="new-gc-name" placeholder="Enter New GC Name" class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400">
-                    <button type="button" onclick="createGC()" class="w-full py-3 bg-amber-600 hover:bg-amber-500 btn-3d ios-bold text-xs rounded-xl text-white">Create GC ➕</button>
+                    <div>
+                        <label class="text-[10px] text-gray-400 block mb-1">Bot Tokens (comma separated):</label>
+                        <textarea id="tg-tokens" rows="2" placeholder="TOKEN1, TOKEN2..." class="w-full bg-black/70 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-400"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-400 block mb-1">Owner User ID:</label>
+                        <input type="text" id="tg-owner" placeholder="Owner ID" class="w-full bg-black/70 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-400">
+                    </div>
+                    <button type="button" onclick="deployTelegram()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 btn-3d ios-bold text-xs rounded-xl text-white">Deploy Daemons 🚀</button>
                 </div>
-                
-                <!-- GC Dedicated Live Logs -->
-                <div class="space-y-2 pt-2">
-                    <h4 class="text-xs ios-bold uppercase text-amber-300">GC Creator Live Logs</h4>
-                    <div id="logs-gc" class="bg-black/90 p-3 rounded-xl border border-gray-800 font-mono text-[11px] text-amber-400 h-28 overflow-y-auto"></div>
+                <div id="tg-status" class="text-[10px] text-blue-300"></div>
+                <div class="space-y-1 pt-1">
+                    <h4 class="text-[10px] ios-bold uppercase text-blue-300">Live Logs</h4>
+                    <div id="logs-telegram" class="bg-black/90 p-2.5 rounded-xl border border-gray-800 font-mono text-[10px] text-blue-400 h-24 overflow-y-auto"></div>
                 </div>
             </div>
 
             <!-- 3. WHATSAPP SECTION -->
-            <div class="glass-card p-6 rounded-3xl space-y-4 border border-emerald-500/30">
-                <h3 class="text-base ios-bold text-emerald-400">💬 WhatsApp Bot Section</h3>
-                <div class="space-y-3">
-                    <label class="text-[11px] text-gray-400 block">WhatsApp Phone Number (with Country Code):</label>
-                    <input type="text" id="wa-phone" placeholder="e.g. 919876543210" class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400">
-                    <button type="button" onclick="pairWhatsApp()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 btn-3d ios-bold text-xs rounded-xl text-white">Generate Pair Code 🔗</button>
+            <div class="glass-card p-5 rounded-3xl space-y-4 border border-emerald-500/30">
+                <div class="border-b border-gray-800 pb-3">
+                    <h3 class="text-base ios-bold text-emerald-400">💬 WHATSAPP</h3>
+                    <p class="text-[10px] text-gray-400">Pairing & Automation</p>
                 </div>
-                <div id="wa-result" class="text-xs text-emerald-300 font-mono pt-1"></div>
-
-                <!-- WhatsApp Dedicated Live Logs -->
-                <div class="space-y-2 pt-2">
-                    <h4 class="text-xs ios-bold uppercase text-emerald-300">WhatsApp Live Logs</h4>
-                    <div id="logs-whatsapp" class="bg-black/90 p-3 rounded-xl border border-gray-800 font-mono text-[11px] text-emerald-400 h-28 overflow-y-auto"></div>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[10px] text-gray-400 block mb-1">Phone Number (with Country Code):</label>
+                        <input type="text" id="wa-phone" placeholder="e.g. 919876543210" class="w-full bg-black/70 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <button type="button" onclick="pairWhatsApp()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 btn-3d ios-bold text-xs rounded-xl text-white">Generate Pair Code 🔗</button>
+                </div>
+                <div id="wa-result" class="text-xs text-emerald-300 font-mono"></div>
+                <div class="space-y-1 pt-1">
+                    <h4 class="text-[10px] ios-bold uppercase text-emerald-300">Live Logs</h4>
+                    <div id="logs-whatsapp" class="bg-black/90 p-2.5 rounded-xl border border-gray-800 font-mono text-[10px] text-emerald-400 h-28 overflow-y-auto"></div>
                 </div>
             </div>
 
-            <!-- 4. TELEGRAM SECTION -->
-            <div class="glass-card p-6 rounded-3xl space-y-4 border border-blue-500/30">
-                <h3 class="text-base ios-bold text-blue-400">🤖 Telegram Multi-Bot Manager (Unnatv5)</h3>
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-[11px] text-gray-400 block mb-1">Bot Tokens (separated by comma):</label>
-                        <textarea id="tg-tokens" rows="2" placeholder="TOKEN1, TOKEN2..." class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-400"></textarea>
-                    </div>
-                    <div>
-                        <label class="text-[11px] text-gray-400 block mb-1">Owner Telegram User ID:</label>
-                        <input type="text" id="tg-owner" placeholder="Owner User ID" class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-400">
-                    </div>
-                    <button type="button" onclick="deployTelegram()" class="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:opacity-90 btn-3d ios-bold text-xs rounded-xl text-white">Deploy 24/7 Daemons 🚀</button>
-                </div>
-                <div id="tg-status" class="text-xs text-blue-300 pt-1"></div>
+        </div>
 
-                <!-- Telegram Dedicated Live Logs -->
-                <div class="space-y-2 pt-2">
-                    <h4 class="text-xs ios-bold uppercase text-blue-300">Telegram Live Logs</h4>
-                    <div id="logs-telegram" class="bg-black/90 p-3 rounded-xl border border-gray-800 font-mono text-[11px] text-blue-400 h-28 overflow-y-auto"></div>
+        <!-- LOWER GRID FOR USERS, ACTIVITY & RUNTIME -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- 4. LOGIN USERS SECTION -->
+            <div class="glass-card p-5 rounded-3xl space-y-3 border border-purple-500/30">
+                <h3 class="text-sm ios-bold text-purple-400">👤 LOGIN USERS</h3>
+                <div class="space-y-2 text-xs text-gray-300 bg-black/50 p-3 rounded-2xl border border-gray-800">
+                    <div class="flex justify-between items-center">
+                        <span class="text-cyan-300 font-bold">UNNAT (Owner)</span>
+                        <span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded">Active</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-pink-300 font-bold">USER (Restricted)</span>
+                        <span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded">Active</span>
+                    </div>
+                </div>
+                <p class="text-[10px] text-gray-400 italic">Role-based access control enabled.</p>
+            </div>
+
+            <!-- 5. PANEL ACTIVITY SECTION -->
+            <div class="glass-card p-5 rounded-3xl space-y-3 border border-amber-500/30">
+                <h3 class="text-sm ios-bold text-amber-400">⚡ PANEL ACTIVITY</h3>
+                <div id="panel-activity-box" class="bg-black/90 p-3 rounded-2xl border border-gray-800 font-mono text-[10px] text-amber-300 h-28 overflow-y-auto">
+                    <div>> System boot successful...</div>
+                    <div>> Background workers initialized...</div>
+                </div>
+            </div>
+
+            <!-- 6. PANEL RUNTIME SECTION -->
+            <div class="glass-card p-5 rounded-3xl space-y-3 border border-rose-500/30">
+                <h3 class="text-sm ios-bold text-rose-400">⏳ PANEL RUNTIME</h3>
+                <div class="bg-black/50 p-3 rounded-2xl border border-gray-800 space-y-2 text-xs">
+                    <div class="flex justify-between text-gray-400">
+                        <span>Status:</span>
+                        <span class="text-emerald-400 font-bold">24/7 ONLINE ⚡</span>
+                    </div>
+                    <div class="flex justify-between text-gray-400">
+                        <span>Uptime:</span>
+                        <span id="uptime-counter" class="text-rose-300 font-mono">00:00:00</span>
+                    </div>
+                    <div class="flex justify-between text-gray-400">
+                        <span>Environment:</span>
+                        <span class="text-cyan-300">Render Cloud</span>
+                    </div>
                 </div>
             </div>
 
@@ -152,7 +183,17 @@
         if(isIOS) badge.classList.add("ios-bold");
 
         let activeAccounts = [];
-        let currentUserRole = "user";
+        let startTime = Date.now();
+
+        // Uptime counter updater
+        setInterval(() => {
+            const diff = Math.floor((Date.now() - startTime) / 1000);
+            const hrs = String(Math.floor(diff / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+            const secs = String(diff % 60).padStart(2, '0');
+            const el = document.getElementById("uptime-counter");
+            if(el) el.innerText = `${hrs}:${mins}:${secs}`;
+        }, 1000);
 
         async function handleLogin(e) {
             e.preventDefault();
@@ -166,17 +207,9 @@
                 const res = await fetch("/api/login", { method: "POST", body: fd });
                 const data = await res.json();
                 if(data.success) {
-                    currentUserRole = data.role;
                     document.getElementById("login-modal").style.display = "none";
                     document.getElementById("dashboard").style.display = "block";
-                    
-                    if(data.role === "owner") {
-                        document.getElementById("user-role-badge").innerText = "Role: Owner (Full Access)";
-                        document.getElementById("owner-exclusive-section").style.display = "block";
-                    } else {
-                        document.getElementById("user-role-badge").innerText = "Role: User (Instagram Automation)";
-                        document.getElementById("owner-exclusive-section").style.display = "none";
-                    }
+                    document.getElementById("user-role-badge").innerText = `Role: ${data.role.toUpperCase()}`;
                     setInterval(fetchAllLogs, 2000);
                 } else {
                     const err = document.getElementById("login-error");
@@ -188,38 +221,20 @@
             }
         }
 
-        function openAddAccountModal() {
-            document.getElementById("add-account-modal").style.display = "flex";
-        }
-
-        function closeAddAccountModal() {
-            document.getElementById("add-account-modal").style.display = "none";
-        }
+        function openAddAccountModal() { document.getElementById("add-account-modal").style.display = "flex"; }
+        function closeAddAccountModal() { document.getElementById("add-account-modal").style.display = "none"; }
 
         async function submitAddAccount() {
             const sessionIdInput = document.getElementById("popup-session-id").value.trim();
             if(!sessionIdInput) { alert("Please enter session ID!"); return; }
-
-            let sessionId = sessionIdInput;
-            if(sessionIdInput.includes("sessionid=")) {
-                const match = sessionIdInput.match(/sessionid=([^;]+)/);
-                if(match) sessionId = match[1];
-            }
-
             const fd = new URLSearchParams();
-            fd.append("session_id", sessionId);
+            fd.append("session_id", sessionIdInput);
 
             try {
                 const res = await fetch("/api/insta/connect-session", { method: "POST", body: fd });
                 const data = await res.json();
-
                 if(data.success) {
-                    const accountObj = {
-                        sessionId: sessionId,
-                        username: data.username,
-                        status: "Stopped"
-                    };
-                    activeAccounts.push(accountObj);
+                    activeAccounts.push({ sessionId: sessionIdInput, username: data.username, status: "Stopped" });
                     renderAccounts();
                     closeAddAccountModal();
                     document.getElementById("popup-session-id").value = "";
@@ -234,41 +249,21 @@
         function renderAccounts() {
             const container = document.getElementById("accounts-container");
             if(activeAccounts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 italic">No Instagram accounts connected yet. Click "+ Add Account" above.</p>`;
+                container.innerHTML = `<p class="text-xs text-gray-400 italic">No account connected.</p>`;
                 return;
             }
-
             let html = "";
             activeAccounts.forEach((acc, idx) => {
                 html += `
-                    <div class="bg-black/50 border border-cyan-500/30 p-5 rounded-2xl space-y-4">
-                        <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                            <span class="text-sm ios-bold text-cyan-300">👤 Username: @${acc.username}</span>
-                            <span class="text-[10px] bg-cyan-950 text-cyan-400 px-3 py-1 rounded-lg font-bold">Status: ${acc.status}</span>
+                    <div class="bg-black/50 border border-cyan-500/30 p-3 rounded-2xl space-y-2 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-cyan-300 font-bold">@${acc.username}</span>
+                            <span class="text-[9px] bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded">${acc.status}</span>
                         </div>
-                        
-                        <div class="space-y-3">
-                            <div>
-                                <label class="text-[11px] text-gray-400 block mb-1">Custom Spam Text:</label>
-                                <input type="text" id="spam-text-${idx}" placeholder="Enter spam message..." class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-gray-400 block mb-1">Spam Random Delay (Seconds):</label>
-                                <input type="number" id="spam-delay-${idx}" placeholder="e.g. 3" class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-gray-400 block mb-1">Custom NC Text:</label>
-                                <input type="text" id="nc-text-${idx}" placeholder="Enter name changer text..." class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-gray-400 block mb-1">Multi NC Random Delay (Seconds):</label>
-                                <input type="number" id="nc-delay-${idx}" placeholder="e.g. 5" class="w-full bg-black/70 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
-                            </div>
-                        </div>
-
-                        <div class="flex gap-3 pt-2">
-                            <button type="button" onclick="saveAndToggleTask(${idx}, 'start')" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 btn-3d ios-bold text-xs rounded-xl text-white">Save & Start 🚀</button>
-                            <button type="button" onclick="saveAndToggleTask(${idx}, 'stop')" class="flex-1 py-3 bg-rose-600 hover:bg-rose-500 btn-3d ios-bold text-xs rounded-xl text-white">Stop 🛑</button>
+                        <input type="text" id="spam-text-${idx}" placeholder="Spam text..." class="w-full bg-black/70 border border-gray-700 rounded-lg p-2 text-[11px] text-white">
+                        <div class="flex gap-2">
+                            <button type="button" onclick="saveAndToggleTask(${idx}, 'start')" class="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 btn-3d ios-bold text-[10px] rounded-lg text-white">Start 🚀</button>
+                            <button type="button" onclick="saveAndToggleTask(${idx}, 'stop')" class="flex-1 py-1.5 bg-rose-600 hover:bg-rose-500 btn-3d ios-bold text-[10px] rounded-lg text-white">Stop 🛑</button>
                         </div>
                     </div>
                 `;
@@ -279,34 +274,18 @@
         async function saveAndToggleTask(idx, action) {
             const acc = activeAccounts[idx];
             const spamText = document.getElementById(`spam-text-${idx}`).value;
-            const spamDelay = document.getElementById(`spam-delay-${idx}`).value;
-            const ncText = document.getElementById(`nc-text-${idx}`).value;
-            const ncDelay = document.getElementById(`nc-delay-${idx}`).value;
-
             const fd = new URLSearchParams();
             fd.append("task_type", "multisession_automation");
             fd.append("session_id", acc.sessionId);
-            fd.append("target_data", `${spamText}|${spamDelay}|${ncText}|${ncDelay}`);
+            fd.append("target_data", `${spamText}|3|UNNAT|5`);
 
             if(action === 'start') {
-                acc.status = "Running 24/7";
+                acc.status = "Running";
                 await fetch("/api/insta/start-task", { method: "POST", body: fd });
-                alert(`Account @${acc.username} tasks saved and started successfully!`);
             } else {
                 acc.status = "Stopped";
-                alert(`Account @${acc.username} stopped.`);
             }
             renderAccounts();
-        }
-
-        async function createGC() {
-            const name = document.getElementById("new-gc-name").value.trim();
-            if(!name) { alert("Please enter GC name!"); return; }
-            const fd = new URLSearchParams();
-            fd.append("gc_name", name);
-            await fetch("/api/gc/create", { method: "POST", body: fd });
-            alert(`New GC Created Successfully: ${name}`);
-            document.getElementById("new-gc-name").value = "";
         }
 
         async function pairWhatsApp() {
@@ -316,29 +295,19 @@
             fd.append("phone", phone);
             const res = await fetch("/api/whatsapp/pair", { method: "POST", body: fd });
             const data = await res.json();
-            document.getElementById("wa-result").innerText = `Pairing Code Generated: ${data.pair_code}`;
+            document.getElementById("wa-result").innerText = `Pair Code: ${data.pair_code}`;
         }
 
         async function deployTelegram() {
             const tokens = document.getElementById("tg-tokens").value.trim();
             const owner = document.getElementById("tg-owner").value.trim();
-            if(!tokens || !owner) { alert("Please enter bot tokens and owner ID!"); return; }
-            
+            if(!tokens || !owner) { alert("Please enter tokens and owner ID!"); return; }
             const fd = new URLSearchParams();
             fd.append("tokens", tokens);
             fd.append("owner_id", owner);
-            
-            try {
-                const res = await fetch("/api/telegram/deploy", { method: "POST", body: fd });
-                const data = await res.json();
-                if(data.success) {
-                    document.getElementById("tg-status").innerText = `Successfully deployed ${data.active_count} Telegram bot daemons running 24/7!`;
-                } else {
-                    alert("Deployment failed.");
-                }
-            } catch(e) {
-                alert("Error deploying Telegram bots: " + e);
-            }
+            const res = await fetch("/api/telegram/deploy", { method: "POST", body: fd });
+            const data = await res.json();
+            if(data.success) document.getElementById("tg-status").innerText = `Deployed ${data.active_count} bots successfully!`;
         }
 
         async function fetchAllLogs() {
@@ -346,47 +315,14 @@
                 const res = await fetch("/api/logs/all");
                 const data = await res.json();
                 
-                // Populate Instagram Logs
-                let instaHtml = "";
-                if(data.logs.instagram && data.logs.instagram.length > 0) {
-                    data.logs.instagram.forEach(l => instaHtml += `<div>> ${l}</div>`);
-                } else {
-                    instaHtml = "<div>> Instagram ready...</div>";
-                }
-                document.getElementById("logs-instagram").innerHTML = instaHtml;
-
-                // Populate GC Logs
-                let gcHtml = "";
-                if(data.logs.gc && data.logs.gc.length > 0) {
-                    data.logs.gc.forEach(l => gcHtml += `<div>> ${l}</div>`);
-                } else {
-                    gcHtml = "<div>> GC Creator ready...</div>";
-                }
-                const gcLogEl = document.getElementById("logs-gc");
-                if(gcLogEl) gcLogEl.innerHTML = gcHtml;
-
-                // Populate WhatsApp Logs
-                let waHtml = "";
-                if(data.logs.whatsapp && data.logs.whatsapp.length > 0) {
-                    data.logs.whatsapp.forEach(l => waHtml += `<div>> ${l}</div>`);
-                } else {
-                    waHtml = "<div>> WhatsApp ready...</div>";
-                }
-                const waLogEl = document.getElementById("logs-whatsapp");
-                if(waLogEl) waLogEl.innerHTML = waHtml;
-
-                // Populate Telegram Logs
-                let tgHtml = "";
-                if(data.logs.telegram && data.logs.telegram.length > 0) {
-                    data.logs.telegram.forEach(l => tgHtml += `<div>> ${l}</div>`);
-                } else {
-                    tgHtml = "<div>> Telegram daemon ready...</div>";
-                }
-                const tgLogEl = document.getElementById("logs-telegram");
-                if(tgLogEl) tgLogEl.innerHTML = tgHtml;
-
+                ["instagram", "telegram", "whatsapp"].forEach(mod => {
+                    const el = document.getElementById(`logs-${mod}`);
+                    if(el && data.logs[mod]) {
+                        el.innerHTML = data.logs[mod].map(l => `<div>> ${l}</div>`).join('');
+                    }
+                });
             } catch(e) {
-                console.error("Failed fetching module logs");
+                console.error("Log fetch error");
             }
         }
     </script>
