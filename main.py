@@ -68,7 +68,7 @@ async def insta_connect(session_id: str = Form(...)):
             
             if "accounts/login" in page.url:
                 await browser.close()
-                return {"success": False, "message": "Session expired or invalid."}
+                return {"success": False, "message": "Session expired or invalid (Redirected to login)."}
             
             username = "SONA_USER"
             try:
@@ -80,20 +80,75 @@ async def insta_connect(session_id: str = Form(...)):
                 pass
 
             await browser.close()
+            log_module("instagram", f"Successfully connected via Playwright: @{username}")
             return {"success": True, "username": username}
+            
     except Exception as e:
-        return {"success": False, "message": str(e)}
+        log_module("instagram", f"Connection exception: {str(e)}")
+        return {"success": False, "message": f"Connection error: {str(e)}"}
 
 @app.post("/api/insta/fetch-gcs")
 async def insta_fetch_gcs(session_id: str = Form(...)):
-    # Mocking fetched GCs for the connected session (can be linked with real Instagram Direct threads API via Playwright)
-    sample_gcs = [
-        {"id": "thread_101", "name": "SONA VIP Group #1", "members": 15},
-        {"id": "thread_102", "name": "Cyberpunk Spam GC #2", "members": 28},
-        {"id": "thread_103", "name": "Unnat Automation Hub #3", "members": 42}
-    ]
-    log_module("gc", f"Fetched {len(sample_gcs)} GCs for session.")
-    return {"success": True, "gcs": sample_gcs}
+    clean_sid = session_id.strip()
+    if "sessionid=" in clean_sid:
+        match = re.search(r'sessionid=([^;]+)', clean_sid)
+        if match:
+            clean_sid = match.group(1)
+
+    gcs_list = []
+    try:
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(
+                headless=True,
+                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+            )
+            context = await browser.new_context(
+                user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 284.0.0.21.114 (iPhone14,3; iOS 16_5; en_US; en-US; scale=3.00; 1284x2778; 471924622)"
+            )
+            
+            await context.add_cookies([{
+                "name": "sessionid",
+                "value": clean_sid,
+                "domain": ".instagram.com",
+                "path": "/"
+            }])
+            
+            page = await context.new_page()
+            await page.goto("https://www.instagram.com/direct/inbox/", timeout=35000)
+            await asyncio.sleep(5)
+            
+            gcs_data = await page.evaluate("""() => {
+                let threads = [];
+                let items = document.querySelectorAll('div[role="listitem"] a, a[href*="/direct/t/"]');
+                items.forEach(item => {
+                    let href = item.getAttribute('href');
+                    let titleEl = item.querySelector('span[dir], div[dir]');
+                    if (href && href.includes('/direct/t/')) {
+                        let threadId = href.split('/direct/t/')[1].replace('/', '');
+                        let name = titleEl ? titleEl.innerText : 'Instagram Group Chat';
+                        if (!threads.some(t => t.id === threadId)) {
+                            threads.push({ id: threadId, name: name, members: 'Active' });
+                        }
+                    }
+                });
+                return threads;
+            });""")
+            
+            if gcs_data and len(gcs_data) > 0:
+                gcs_list = gcs_data
+            else:
+                content = await page.content()
+                thread_matches = re.findall(r'/direct/t/([0-9]+)', content)
+                for tid in set(thread_matches):
+                    gcs_list.append({"id": tid, "name": f"GC Thread {tid[-4:]}", "members": "Live"})
+
+            await browser.close()
+            log_module("gc", f"Successfully fetched {len(gcs_list)} real GCs via Playwright.")
+            return {"success": True, "gcs": gcs_list}
+            
+    except Exception as e:
+        log_module("gc", f"Error fetching real GCs: {str(e)}")
+        return {"success": False, "message": str(e)}
 
 @app.post("/api/insta/start-task")
 async def start_insta_task(task_type: str = Form(...), session_id: str = Form(...), target_data: str = Form(...)):
@@ -102,12 +157,19 @@ async def start_insta_task(task_type: str = Form(...), session_id: str = Form(..
 
 @app.post("/api/whatsapp/pair")
 async def whatsapp_pair(phone: str = Form(...)):
+    log_module("whatsapp", f"Pairing requested for phone: {phone}")
     return {"success": True, "pair_code": "SONA-WA-888"}
 
 @app.post("/api/telegram/deploy")
 async def telegram_deploy(tokens: str = Form(...), owner_id: str = Form(...)):
     token_list = [t.strip() for t in tokens.split(",") if t.strip()]
     log_module("telegram", f"Deploying {len(token_list)} SONA Telegram bot daemons...")
+    
+    os.makedirs("scripts", exist_ok=True)
+    with open("scripts/unnatv5.py", "w") as f:
+        f.write(f"# SONA Telegram Multi-Bot Daemon Script\n# Owner ID: {owner_id}\n")
+        f.write(f"# Tokens configured: {len(token_list)}\n")
+        
     return {"success": True, "active_count": len(token_list)}
 
 @app.get("/api/logs/all")
