@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="font-size: 430%;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +7,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050509; color: #f3f4f6; min-height: 100vh; }
+        :root { font-size: 16px; } /* Base custom DPI scale controlled via root/html */
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050509; color: #f3f4f6; min-height: 100vh; font-size: 0.85rem; }
         .ios-bold { font-weight: 800; letter-spacing: -0.025em; }
         .glass-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
         .btn-3d { transition: all 0.2s ease; box-shadow: 0 4px 0 #0284c7; }
         .btn-3d:active { transform: translateY(4px); box-shadow: 0 0 0 #0284c7; }
     </style>
+    <script>
+        // Custom DPI multiplier set to 430 scale equivalent styling
+        document.documentElement.style.fontSize = '13.5px';
+    </script>
 </head>
-<body class="p-4 md:p-8 pb-24">
+<body class="p-4 md:p-6 pb-24">
 
     <!-- LOGIN MODAL -->
     <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4">
@@ -32,31 +37,33 @@
     </div>
 
     <!-- MAIN DASHBOARD -->
-    <div id="dashboard" class="max-w-6xl mx-auto space-y-6 hidden">
+    <div id="dashboard" class="max-w-7xl mx-auto space-y-6 hidden">
         
         <!-- HEADER -->
-        <header class="glass-card p-6 rounded-3xl flex justify-between items-center border border-cyan-500/20">
+        <header class="glass-card p-5 rounded-3xl flex justify-between items-center border border-cyan-500/20">
             <div>
-                <h1 class="text-2xl ios-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">UNNAT | SONA ❤</h1>
-                <p id="user-role-badge" class="text-xs text-cyan-300 mt-1 ios-bold">Role: Loading...</p>
+                <h1 class="text-xl ios-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">UNNAT | SONA ❤</h1>
+                <p id="user-role-badge" class="text-[11px] text-cyan-300 mt-0.5 ios-bold">Role: Loading...</p>
             </div>
-            <div class="bg-cyan-950/60 border border-cyan-500/40 px-4 py-2 rounded-2xl text-xs text-cyan-300 ios-bold">LIVE 24/7 ⚡</div>
+            <div class="bg-cyan-950/60 border border-cyan-500/40 px-3 py-1.5 rounded-xl text-[11px] text-cyan-300 ios-bold">DPI 430 | LIVE 24/7 ⚡</div>
         </header>
 
         <!-- GRID LAYOUT FOR SECTIONS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-            <!-- 1. INSTAGRAM SECTION -->
+            <!-- 1. INSTAGRAM & GC CREATOR SECTION -->
             <div class="glass-card p-5 rounded-3xl space-y-4 border border-cyan-500/30">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                    <h3 class="text-base ios-bold text-cyan-400">📸 INSTAGRAM</h3>
-                    <button type="button" onclick="openAddAccountModal()" class="px-3 py-1.5 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-[10px] rounded-lg text-white">+ Add</button>
+                    <h3 class="text-sm ios-bold text-cyan-400">📸 INSTAGRAM & GC CREATOR</h3>
+                    <button type="button" onclick="openAddAccountModal()" class="px-3 py-1.5 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-[10px] rounded-lg text-white">+ Add Account</button>
                 </div>
+                
                 <div id="accounts-container" class="space-y-3">
-                    <p class="text-xs text-gray-400 italic">No account connected.</p>
+                    <p class="text-xs text-gray-400 italic">No account connected. Click "+ Add Account".</p>
                 </div>
+
                 <div class="space-y-1 pt-2">
-                    <h4 class="text-[10px] ios-bold uppercase text-cyan-300">Live Logs</h4>
+                    <h4 class="text-[10px] ios-bold uppercase text-cyan-300">Instagram Live Logs</h4>
                     <div id="logs-instagram" class="bg-black/90 p-2.5 rounded-xl border border-gray-800 font-mono text-[10px] text-cyan-400 h-28 overflow-y-auto"></div>
                 </div>
             </div>
@@ -64,7 +71,7 @@
             <!-- 2. TELEGRAM SECTION -->
             <div class="glass-card p-5 rounded-3xl space-y-4 border border-blue-500/30">
                 <div class="border-b border-gray-800 pb-3">
-                    <h3 class="text-base ios-bold text-blue-400">🤖 TELEGRAM</h3>
+                    <h3 class="text-sm ios-bold text-blue-400">🤖 TELEGRAM</h3>
                     <p class="text-[10px] text-gray-400">Unnatv5 Multi-Bot Manager</p>
                 </div>
                 <div class="space-y-3">
@@ -81,14 +88,14 @@
                 <div id="tg-status" class="text-[10px] text-blue-300"></div>
                 <div class="space-y-1 pt-1">
                     <h4 class="text-[10px] ios-bold uppercase text-blue-300">Live Logs</h4>
-                    <div id="logs-telegram" class="bg-black/90 p-2.5 rounded-xl border border-gray-800 font-mono text-[10px] text-blue-400 h-24 overflow-y-auto"></div>
+                    <div id="logs-telegram" class="bg-black/90 p-2.5 rounded-xl border border-gray-800 font-mono text-[10px] text-blue-400 h-28 overflow-y-auto"></div>
                 </div>
             </div>
 
             <!-- 3. WHATSAPP SECTION -->
             <div class="glass-card p-5 rounded-3xl space-y-4 border border-emerald-500/30">
                 <div class="border-b border-gray-800 pb-3">
-                    <h3 class="text-base ios-bold text-emerald-400">💬 WHATSAPP</h3>
+                    <h3 class="text-sm ios-bold text-emerald-400">💬 WHATSAPP</h3>
                     <p class="text-[10px] text-gray-400">Pairing & Automation</p>
                 </div>
                 <div class="space-y-3">
@@ -108,7 +115,7 @@
         </div>
 
         <!-- LOWER GRID FOR USERS, ACTIVITY & RUNTIME -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
             <!-- 4. LOGIN USERS SECTION -->
             <div class="glass-card p-5 rounded-3xl space-y-3 border border-purple-500/30">
@@ -123,7 +130,6 @@
                         <span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded">Active</span>
                     </div>
                 </div>
-                <p class="text-[10px] text-gray-400 italic">Role-based access control enabled.</p>
             </div>
 
             <!-- 5. PANEL ACTIVITY SECTION -->
@@ -131,7 +137,7 @@
                 <h3 class="text-sm ios-bold text-amber-400">⚡ PANEL ACTIVITY</h3>
                 <div id="panel-activity-box" class="bg-black/90 p-3 rounded-2xl border border-gray-800 font-mono text-[10px] text-amber-300 h-28 overflow-y-auto">
                     <div>> System boot successful...</div>
-                    <div>> Background workers initialized...</div>
+                    <div>> DPI 430 scaled layout loaded...</div>
                 </div>
             </div>
 
@@ -158,20 +164,40 @@
 
     </div>
 
-    <!-- ADD INSTAGRAM ACCOUNT MODAL -->
+    <!-- ADD INSTAGRAM ACCOUNT & GC CREATOR MODAL -->
     <div id="add-account-modal" class="fixed inset-0 z-50 items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
-        <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-pink-500/40 space-y-5 shadow-2xl">
+        <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-pink-500/40 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center">
-                <h3 class="text-lg ios-bold text-pink-400">Connect Instagram Account</h3>
+                <h3 class="text-base ios-bold text-pink-400">Instagram GC Creator & Session Hub</h3>
                 <button type="button" onclick="closeAddAccountModal()" class="text-gray-400 hover:text-white text-sm font-bold">✕</button>
             </div>
-            <div class="space-y-3">
-                <label class="text-xs text-gray-300 block">Paste your Instagram sessionid cookie:</label>
-                <input type="text" id="popup-session-id" placeholder="sessionid=..." class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-400">
+            
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-[11px] text-gray-300 block mb-1">Session ID:</label>
+                    <input type="text" id="popup-session-id" placeholder="sessionid=..." class="w-full bg-black/60 border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-400">
+                </div>
+                <div>
+                    <label class="text-[11px] text-gray-300 block mb-1">GC Count:</label>
+                    <input type="number" id="popup-gc-count" placeholder="e.g. 5" class="w-full bg-black/60 border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-400">
+                </div>
+                <div>
+                    <label class="text-[11px] text-gray-300 block mb-1">GC Delivery Custom Text:</label>
+                    <input type="text" id="popup-gc-text" placeholder="Enter custom message text..." class="w-full bg-black/60 border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-400">
+                </div>
+                <div>
+                    <label class="text-[11px] text-gray-300 block mb-1">Custom NC Text (Name Changer):</label>
+                    <input type="text" id="popup-nc-text" placeholder="Enter NC text..." class="w-full bg-black/60 border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-400">
+                </div>
+                <div>
+                    <label class="text-[11px] text-gray-300 block mb-1">Delay Per PC (Seconds):</label>
+                    <input type="number" id="popup-delay" placeholder="e.g. 3" class="w-full bg-black/60 border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-400">
+                </div>
             </div>
+
             <div class="flex gap-3 pt-2">
-                <button type="button" onclick="submitAddAccount()" class="flex-1 py-3 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">Connect & Fetch</button>
-                <button type="button" onclick="closeAddAccountModal()" class="px-5 py-3 bg-gray-800 hover:bg-gray-700 ios-bold text-xs rounded-xl text-gray-300">Cancel</button>
+                <button type="button" onclick="submitAddAccount()" class="flex-1 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">SAVE 🚀</button>
+                <button type="button" onclick="closeAddAccountModal()" class="px-4 py-2.5 bg-gray-800 hover:bg-gray-700 ios-bold text-xs rounded-xl text-gray-300">Cancel</button>
             </div>
         </div>
     </div>
@@ -179,13 +205,12 @@
     <script>
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const badge = document.getElementById("device-badge");
-        badge.innerText = isIOS ? "iOS Device Connected (Bold 3D Mode)" : "Desktop / Android Connected";
+        badge.innerText = isIOS ? "iOS Device Connected (DPI 430 Mode)" : "Desktop / Android Connected (DPI 430)";
         if(isIOS) badge.classList.add("ios-bold");
 
         let activeAccounts = [];
         let startTime = Date.now();
 
-        // Uptime counter updater
         setInterval(() => {
             const diff = Math.floor((Date.now() - startTime) / 1000);
             const hrs = String(Math.floor(diff / 3600)).padStart(2, '0');
@@ -226,7 +251,13 @@
 
         async function submitAddAccount() {
             const sessionIdInput = document.getElementById("popup-session-id").value.trim();
+            const gcCount = document.getElementById("popup-gc-count").value.trim();
+            const gcText = document.getElementById("popup-gc-text").value.trim();
+            const ncText = document.getElementById("popup-nc-text").value.trim();
+            const delay = document.getElementById("popup-delay").value.trim();
+
             if(!sessionIdInput) { alert("Please enter session ID!"); return; }
+
             const fd = new URLSearchParams();
             fd.append("session_id", sessionIdInput);
 
@@ -234,10 +265,23 @@
                 const res = await fetch("/api/insta/connect-session", { method: "POST", body: fd });
                 const data = await res.json();
                 if(data.success) {
-                    activeAccounts.push({ sessionId: sessionIdInput, username: data.username, status: "Stopped" });
+                    activeAccounts.push({
+                        sessionId: sessionIdInput,
+                        username: data.username,
+                        gcCount: gcCount || '1',
+                        gcText: gcText || '',
+                        ncText: ncText || '',
+                        delay: delay || '3',
+                        status: "Configured & Saved"
+                    });
                     renderAccounts();
                     closeAddAccountModal();
+                    // Clear inputs
                     document.getElementById("popup-session-id").value = "";
+                    document.getElementById("popup-gc-count").value = "";
+                    document.getElementById("popup-gc-text").value = "";
+                    document.getElementById("popup-nc-text").value = "";
+                    document.getElementById("popup-delay").value = "";
                 } else {
                     alert(data.message || "Invalid Session ID!");
                 }
@@ -249,7 +293,7 @@
         function renderAccounts() {
             const container = document.getElementById("accounts-container");
             if(activeAccounts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 italic">No account connected.</p>`;
+                container.innerHTML = `<p class="text-xs text-gray-400 italic">No account connected. Click "+ Add Account".</p>`;
                 return;
             }
             let html = "";
@@ -260,10 +304,13 @@
                             <span class="text-cyan-300 font-bold">@${acc.username}</span>
                             <span class="text-[9px] bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded">${acc.status}</span>
                         </div>
-                        <input type="text" id="spam-text-${idx}" placeholder="Spam text..." class="w-full bg-black/70 border border-gray-700 rounded-lg p-2 text-[11px] text-white">
-                        <div class="flex gap-2">
-                            <button type="button" onclick="saveAndToggleTask(${idx}, 'start')" class="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 btn-3d ios-bold text-[10px] rounded-lg text-white">Start 🚀</button>
-                            <button type="button" onclick="saveAndToggleTask(${idx}, 'stop')" class="flex-1 py-1.5 bg-rose-600 hover:bg-rose-500 btn-3d ios-bold text-[10px] rounded-lg text-white">Stop 🛑</button>
+                        <div class="text-[10px] text-gray-300 space-y-0.5">
+                            <div>GCs: ${acc.gcCount} | Text: ${acc.gcText || 'N/A'}</div>
+                            <div>NC: ${acc.ncText || 'N/A'} | Delay: ${acc.delay}s</div>
+                        </div>
+                        <div class="flex gap-2 pt-1">
+                            <button type="button" onclick="startAccountTask(${idx})" class="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 btn-3d ios-bold text-[10px] rounded-lg text-white">Start 🚀</button>
+                            <button type="button" onclick="stopAccountTask(${idx})" class="flex-1 py-1.5 bg-rose-600 hover:bg-rose-500 btn-3d ios-bold text-[10px] rounded-lg text-white">Stop 🛑</button>
                         </div>
                     </div>
                 `;
@@ -271,20 +318,20 @@
             container.innerHTML = html;
         }
 
-        async function saveAndToggleTask(idx, action) {
+        async function startAccountTask(idx) {
             const acc = activeAccounts[idx];
-            const spamText = document.getElementById(`spam-text-${idx}`).value;
             const fd = new URLSearchParams();
             fd.append("task_type", "multisession_automation");
             fd.append("session_id", acc.sessionId);
-            fd.append("target_data", `${spamText}|3|UNNAT|5`);
+            fd.append("target_data", `${acc.gcText}|${acc.delay}|${acc.ncText}|${acc.delay}`);
 
-            if(action === 'start') {
-                acc.status = "Running";
-                await fetch("/api/insta/start-task", { method: "POST", body: fd });
-            } else {
-                acc.status = "Stopped";
-            }
+            acc.status = "Running 24/7";
+            renderAccounts();
+            await fetch("/api/insta/start-task", { method: "POST", body: fd });
+        }
+
+        function stopAccountTask(idx) {
+            activeAccounts[idx].status = "Stopped";
             renderAccounts();
         }
 
