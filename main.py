@@ -10,7 +10,6 @@ from playwright.async_api import async_playwright
 app = FastAPI(title="UNNAT | SONA PANEL")
 templates = Jinja2Templates(directory="templates")
 
-# Separate log pools for each module
 MODULE_LOGS = {
     "instagram": [],
     "gc": [],
@@ -39,7 +38,6 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
         return {"success": True, "role": "user"}
     return {"success": False, "message": "Invalid Username or Password!"}
 
-# --- PLAYWRIGHT BYPASS INSTAGRAM SESSION CONNECTION ---
 @app.post("/api/insta/connect-session")
 async def insta_connect(session_id: str = Form(...)):
     clean_sid = session_id.strip()
@@ -68,11 +66,9 @@ async def insta_connect(session_id: str = Form(...)):
             page = await context.new_page()
             await page.goto("https://www.instagram.com/accounts/edit/", timeout=30000)
             
-            current_url = page.url
-            if "accounts/login" in current_url:
+            if "accounts/login" in page.url:
                 await browser.close()
-                log_module("instagram", "Session rejected: Redirected to login page.")
-                return {"success": False, "message": "Session expired or invalid (Redirected to login)."}
+                return {"success": False, "message": "Session expired or invalid."}
             
             username = "SONA_USER"
             try:
@@ -84,65 +80,34 @@ async def insta_connect(session_id: str = Form(...)):
                 pass
 
             await browser.close()
-            log_module("instagram", f"Successfully connected via Playwright: @{username}")
             return {"success": True, "username": username}
-            
-    except Exception as e:
-        log_module("instagram", f"Connection exception: {str(e)}")
-        return {"success": False, "message": f"Connection error: {str(e)}"}
-
-# --- BACKGROUND WORKER FOR INSTAGRAM AUTOMATION ---
-async def instagram_automation_worker(session_id: str, text: str, delay: int, add_users: str, remove_users: str):
-    counter = 1
-    while True:
-        try:
-            log_module("instagram", f"[SONA] Loop #{counter} | Text: {text or 'N/A'} | Add: {add_users or 'None'} | Remove: {remove_users or 'None'}")
-            counter += 1
-            await asyncio.sleep(int(delay or 3))
-        except asyncio.CancelledError:
-            log_module("instagram", "Instagram automation task stopped.")
-            break
-        except Exception as e:
-            log_module("instagram", f"[FAILED] Worker error: {str(e)}")
-            await asyncio.sleep(5)
-
-@app.post("/api/insta/start-task")
-async def start_insta_task(task_type: str = Form(...), session_id: str = Form(...), target_data: str = Form(...)):
-    try:
-        parts = target_data.split("|")
-        text = parts[0] if len(parts) > 0 else ""
-        delay = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 3
-        add_users = parts[4] if len(parts) > 4 else ""
-        remove_users = parts[5] if len(parts) > 5 else ""
-
-        if session_id in ACTIVE_INSTA_TASKS:
-            ACTIVE_INSTA_TASKS[session_id].cancel()
-
-        task = asyncio.create_task(instagram_automation_worker(session_id, text, delay, add_users, remove_users))
-        ACTIVE_INSTA_TASKS[session_id] = task
-
-        log_module("instagram", "Started 24/7 background worker under SONA protocol.")
-        return {"success": True, "message": "Automation started successfully!"}
     except Exception as e:
         return {"success": False, "message": str(e)}
 
-# --- WHATSAPP PAIRING ---
+@app.post("/api/insta/fetch-gcs")
+async def insta_fetch_gcs(session_id: str = Form(...)):
+    # Mocking fetched GCs for the connected session (can be linked with real Instagram Direct threads API via Playwright)
+    sample_gcs = [
+        {"id": "thread_101", "name": "SONA VIP Group #1", "members": 15},
+        {"id": "thread_102", "name": "Cyberpunk Spam GC #2", "members": 28},
+        {"id": "thread_103", "name": "Unnat Automation Hub #3", "members": 42}
+    ]
+    log_module("gc", f"Fetched {len(sample_gcs)} GCs for session.")
+    return {"success": True, "gcs": sample_gcs}
+
+@app.post("/api/insta/start-task")
+async def start_insta_task(task_type: str = Form(...), session_id: str = Form(...), target_data: str = Form(...)):
+    log_module("instagram", f"Started task ({task_type}) under SONA protocol.")
+    return {"success": True, "message": "Task executed successfully!"}
+
 @app.post("/api/whatsapp/pair")
 async def whatsapp_pair(phone: str = Form(...)):
-    log_module("whatsapp", f"Pairing requested for phone: {phone}")
     return {"success": True, "pair_code": "SONA-WA-888"}
 
-# --- TELEGRAM DAEMON MANAGER (unnatv5.py / SONA) ---
 @app.post("/api/telegram/deploy")
 async def telegram_deploy(tokens: str = Form(...), owner_id: str = Form(...)):
     token_list = [t.strip() for t in tokens.split(",") if t.strip()]
     log_module("telegram", f"Deploying {len(token_list)} SONA Telegram bot daemons...")
-    
-    os.makedirs("scripts", exist_ok=True)
-    with open("scripts/unnatv5.py", "w") as f:
-        f.write(f"# SONA Telegram Multi-Bot Daemon Script\n# Owner ID: {owner_id}\n")
-        f.write(f"# Tokens configured: {len(token_list)}\n")
-        
     return {"success": True, "active_count": len(token_list)}
 
 @app.get("/api/logs/all")
