@@ -1,447 +1,457 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNNAT | SONA - CYBERPUNK RED</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>VIDHAYAK IG PANEL (PLAYWRIGHT + API MIX) 🕷️</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&display=swap');
-        :root { font-size: 13.5px; }
-        body { font-family: 'Orbitron', sans-serif; background: #030002; color: #f3f4f6; min-height: 100vh; }
-        .neon-glow { box-shadow: 0 0 20px rgba(255, 0, 60, 0.4), inset 0 0 15px rgba(255, 0, 60, 0.2); }
-        .neon-border { border: 1px solid rgba(255, 0, 60, 0.6); }
-        .neon-btn { transition: all 0.2s ease; box-shadow: 0 0 10px rgba(255, 0, 60, 0.6); }
-        .neon-btn:hover { box-shadow: 0 0 20px rgba(255, 0, 60, 0.9); background-color: #ff003c; color: #fff; }
-        .glass-cyber { background: rgba(10, 2, 5, 0.9); backdrop-filter: blur(16px); }
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap');
+        :root {
+            --bg-core: #000000;
+            --bg-card: rgba(10, 10, 14, 0.95);
+            --green: #22c55e;
+            --red: #ef4444;
+            --text: #f8fafc;
+            --muted: #64748b;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--bg-core);
+            background-image: radial-gradient(circle at 50% 20%, #111827 0%, #000000 80%);
+            color: var(--text);
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(5, 5, 8, 0.95);
+            border-bottom: 2px solid #334155;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            font-weight: 900;
+            background: linear-gradient(90deg, #ffffff, #94a3b8, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+        .main-base-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+        .base-btn, .tab-btn, .add-btn, .save-btn, .btn { cursor: pointer; text-transform: uppercase; }
+        .base-btn {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid #334155;
+            color: #cbd5e1;
+            padding: 12px 6px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+        }
+        .base-btn.active {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #fff;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
+        .section-panel, .base-panel { display: none; }
+        .section-panel.active, .base-panel.active { display: block; }
+        .add-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #1e293b, #0f172a, #334155);
+            border: 2px solid #ffffff;
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 22px;
+        }
+        .accounts-grid { display: flex; flex-direction: column; gap: 18px; }
+        .account-card {
+            background: var(--bg-card);
+            border: 1.5px solid #334155;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .card-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; color: #fff; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #475569; }
+        .status-dot.running { background: var(--green); box-shadow: 0 0 12px var(--green); }
+        .card-actions { display: flex; gap: 8px; }
+        .btn { padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+        .btn-start { background: var(--green); color: #000000; }
+        .btn-stop { background: var(--red); color: white; }
+        .btn-del { background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.2); }
+        .stats-row { display: flex; border-bottom: 1px solid rgba(255, 255, 255, 0.1); font-family: 'Share Tech Mono', monospace; }
+        .stat-item { flex: 1; padding: 12px; border-right: 1px solid rgba(255, 255, 255, 0.1); text-align: center; background: rgba(0, 0, 0, 0.4); }
+        .stat-label { color: #94a3b8; font-size: 10px; text-transform: uppercase; }
+        .stat-val { font-size: 18px; font-weight: 700; }
+        .status-bar { padding: 10px 18px; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: #94a3b8; background: rgba(0,0,0,0.6); }
+        .console { background: #000000; padding: 14px; font-family: 'Share Tech Mono', monospace; font-size: 11px; height: 150px; overflow-y: auto; color: #e2e8f0; border-top: 1px solid #1e293b; }
+        .console-line { white-space: pre-wrap; word-break: break-all; margin-bottom: 3px; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: #090d16;
+            border: 2px solid #ffffff;
+            border-radius: 16px;
+            padding: 26px;
+            width: 650px;
+            max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+        label { font-size: 11px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; }
+        input, textarea, select {
+            background: #000000;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            padding: 11px;
+            outline: none;
+        }
+        .save-btn {
+            background: linear-gradient(90deg, #1e293b, #334155);
+            color: white;
+            border: 1.5px solid #ffffff;
+            padding: 13px;
+            border-radius: 8px;
+            width: 100%;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+        }
+        .close-modal-btn { background: transparent; color: #94a3b8; border: none; width: 100%; margin-top: 10px; cursor: pointer; font-weight: 700; }
+        .fetch-gcs-btn {
+            background: linear-gradient(90deg, #334155, #1e293b);
+            color: #fff;
+            border: 1px solid #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 5px;
+        }
+        .gc-results-box {
+            background: #000000;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px;
+            max-height: 160px;
+            overflow-y: auto;
+            margin-top: 8px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+        }
+        .gc-item { padding: 6px 8px; border-bottom: 1px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+        .gc-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 11px; }
+        .gc-action-link { color: #94a3b8; cursor: pointer; text-decoration: underline; background: none; border: none; font-weight: 700; }
+        .nc-row { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; margin-bottom: 8px; }
     </style>
 </head>
-<body class="p-4 md:p-6 pb-24">
+<body>
+    <div class="header"><div class="logo">🕷️⚡ VIDHAYAK IG PANEL (PLAYWRIGHT MIX)</div></div>
+    <div class="container">
+        <div class="main-base-tabs">
+            <button class="base-btn active" onclick="switchBase('ig')">🕷️ Instagram Panel</button>
+            <button class="base-btn" onclick="switchBase('session-mgr')">🕸️ Session Manager</button>
+        </div>
 
-    <!-- LOGIN MODAL -->
-    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4">
-        <div class="glass-cyber max-w-md w-full p-8 rounded-2xl text-center neon-border neon-glow shadow-2xl">
-            <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500 mb-1">UNNAT | SONA</h1>
-            <p class="text-[10px] text-red-400 tracking-widest font-bold mb-6">[ CYBERPUNK RED V5 ]</p>
-            <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
-                <input type="text" id="username" placeholder="USERNAME (UNNAT/USER)" required class="w-full bg-black/80 border border-red-900 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-red-500">
-                <input type="password" id="password" placeholder="PASSWORD" required class="w-full bg-black/80 border border-red-900 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-red-500">
-                <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">ACCESS PANEL ⚡</button>
-            </form>
-            <p id="login-error" class="text-red-400 text-xs mt-3 hidden"></p>
+        <div class="base-panel active" id="base-ig">
+            <div class="section-panel active" id="tab-spam">
+                <button class="add-btn" onclick="openModal('spam')">+ 🕷️ Add Playwright Multi GC Bot</button>
+                <div class="accounts-grid" id="list-spam"></div>
+            </div>
+        </div>
+
+        <div class="base-panel" id="base-session-mgr">
+            <div style="background:var(--bg-card); border:1.5px solid #334155; padding:20px; border-radius:12px; margin-bottom:20px;">
+                <h3 style="color:#ffffff; margin-bottom:12px; font-size:16px;">🕸️ Add Session</h3>
+                <div class="form-group"><label>Session ID</label><textarea id="dashboard-new-session" rows="3"></textarea></div>
+                <button class="save-btn" onclick="saveDashboardSession()">Save Session</button>
+            </div>
+            <div class="accounts-grid" id="list-dashboard-sessions"></div>
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
-    <div id="dashboard" class="max-w-7xl mx-auto space-y-6 hidden">
-        
-        <!-- HEADER -->
-        <header class="glass-cyber p-5 rounded-2xl flex justify-between items-center neon-border neon-glow">
-            <div>
-                <h1 class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500">UNNAT | SONA ❤</h1>
-                <p id="user-role-badge" class="text-[10px] text-red-400 mt-0.5 font-bold">ROLE: LOADING...</p>
-            </div>
-            <div class="bg-red-950/60 border border-red-500/40 px-3 py-1.5 rounded-xl text-[10px] text-red-300 font-bold">DPI 430 | SYSTEM ONLINE ⚡</div>
-        </header>
-
-        <!-- MODULE NAV BUTTONS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button onclick="switchTab('insta-multi')" class="glass-cyber p-4 rounded-2xl neon-border flex items-center gap-3 text-left hover:border-red-500 transition">
-                <div class="p-2.5 bg-red-950/80 rounded-xl text-red-400 text-lg">📸</div>
-                <div>
-                    <h3 class="text-xs font-bold text-red-400">INSTA MULTI-SESSION & GCS</h3>
-                    <p class="text-[9px] text-gray-400">Manage accounts & fetch real GCs</p>
-                </div>
-            </button>
-
-            <button onclick="switchTab('insta-onegc')" class="glass-cyber p-4 rounded-2xl neon-border flex items-center gap-3 text-left hover:border-red-500 transition">
-                <div class="p-2.5 bg-red-950/80 rounded-xl text-red-400 text-lg">🎯</div>
-                <div>
-                    <h3 class="text-xs font-bold text-red-400">INSTA 1-GC MANAGER</h3>
-                    <p class="text-[9px] text-gray-400">Spam, Add & Remove Users</p>
-                </div>
-            </button>
-
-            <button onclick="switchTab('tele-whatsapp')" class="glass-cyber p-4 rounded-2xl neon-border flex items-center gap-3 text-left hover:border-red-500 transition">
-                <div class="p-2.5 bg-red-950/80 rounded-xl text-red-400 text-lg">🤖</div>
-                <div>
-                    <h3 class="text-xs font-bold text-red-400">TELEGRAM & WP</h3>
-                    <p class="text-[9px] text-gray-400">Bots & WhatsApp pairing</p>
-                </div>
-            </button>
-        </div>
-
-        <!-- ================= 1. INSTAGRAM MULTI-SESSION & FETCH GC HUB ================= -->
-        <div id="section-insta-multi" class="module-section glass-cyber p-6 rounded-3xl space-y-6 neon-border">
-            <div class="flex justify-between items-center border-b border-red-950 pb-4">
-                <div>
-                    <h2 class="text-base font-bold text-red-500">📸 INSTAGRAM MULTI-SESSION & GC HUB</h2>
-                    <p class="text-xs text-gray-400">Connect accounts, fetch real GCs, and launch spam/NC tasks via popups.</p>
-                </div>
-                <button type="button" onclick="openAddAccountModal()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">+ Connect Session</button>
-            </div>
-            
-            <div id="accounts-container" class="space-y-4">
-                <p class="text-xs text-gray-400 italic">No Instagram accounts connected yet.</p>
-            </div>
-
-            <div class="space-y-2 pt-2">
-                <h4 class="text-xs font-bold uppercase text-red-400">Multi-Session Live Logs</h4>
-                <div id="logs-instagram" class="bg-black p-3 rounded-xl border border-red-950 font-mono text-[11px] text-red-400 h-28 overflow-y-auto"></div>
-            </div>
-        </div>
-
-        <!-- ================= 2. INSTAGRAM 1-GC MANAGER SECTION ================= -->
-        <div id="section-insta-onegc" class="module-section glass-cyber p-6 rounded-3xl space-y-6 neon-border hidden">
-            <div class="border-b border-red-950 pb-4">
-                <h2 class="text-base font-bold text-red-500">🎯 INSTAGRAM 1-GC SPAM & USER MANAGER</h2>
-                <p class="text-xs text-gray-400">Target a specific group chat for continuous spam messaging, user additions, and removals.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-gray-300 block mb-1">Session ID:</label>
-                        <input type="text" id="onegc-session" placeholder="sessionid=..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
-                    </div>
-                    <div>
-                        <label class="text-gray-300 block mb-1">Target GC Thread ID:</label>
-                        <input type="text" id="onegc-thread" placeholder="Thread ID..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
-                    </div>
-                    <div>
-                        <label class="text-red-400 block mb-1">Spam Message Box / Text:</label>
-                        <textarea id="onegc-spamtext" rows="2" placeholder="Enter spam message..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500"></textarea>
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-emerald-400 block mb-1">Add Users (UserIDs comma separated):</label>
-                        <input type="text" id="onegc-addusers" placeholder="id1, id2..." class="w-full bg-black/80 border border-emerald-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="text-red-400 block mb-1">Remove Users (UserIDs comma separated):</label>
-                        <input type="text" id="onegc-removeusers" placeholder="id1, id2..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
-                    </div>
-                    <div>
-                        <label class="text-cyan-400 block mb-1">Delay Per Message (Seconds):</label>
-                        <input type="number" id="onegc-delay" placeholder="3" class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
-                    </div>
-                </div>
-            </div>
-
-            <button type="button" onclick="startOneGCTask()" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">START 1-GC SPAM & MANAGER 🚀</button>
-        </div>
-
-        <!-- ================= 3. TELEGRAM & WHATSAPP SECTION ================= -->
-        <div id="section-tele-whatsapp" class="module-section glass-cyber p-6 rounded-3xl space-y-6 neon-border hidden">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Telegram -->
-                <div class="space-y-4">
-                    <h2 class="text-base font-bold text-red-500">🤖 TELEGRAM DAEMON MANAGER (unnatv5)</h2>
-                    <div>
-                        <label class="text-xs text-gray-300 block mb-1">Bot Tokens (comma separated):</label>
-                        <textarea id="tg-tokens" rows="2" placeholder="TOKEN1, TOKEN2..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-red-500"></textarea>
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-300 block mb-1">Owner User ID:</label>
-                        <input type="text" id="tg-owner" placeholder="Owner ID" class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-red-500">
-                    </div>
-                    <button type="button" onclick="deployTelegram()" class="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">Deploy Telegram Daemons 🚀</button>
-                    <div id="tg-status" class="text-xs text-red-300 font-mono"></div>
-                </div>
-
-                <!-- WhatsApp -->
-                <div class="space-y-4">
-                    <h2 class="text-base font-bold text-red-500">💬 WHATSAPP BOT MANAGER</h2>
-                    <div>
-                        <label class="text-xs text-gray-300 block mb-1">Phone Number (with Country Code):</label>
-                        <input type="text" id="wa-phone" placeholder="919876543210" class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-red-500">
-                    </div>
-                    <button type="button" onclick="pairWhatsApp()" class="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">Generate Pair Code 🔗</button>
-                    <div id="wa-result" class="text-xs text-red-300 font-mono"></div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- CONNECT INSTAGRAM SESSION MODAL -->
-    <div id="add-account-modal" class="fixed inset-0 z-50 items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
-        <div class="glass-cyber max-w-md w-full p-6 rounded-3xl neon-border space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center">
-                <h3 class="text-base font-bold text-red-500">Connect Instagram Session</h3>
-                <button type="button" onclick="closeAddAccountModal()" class="text-gray-400 hover:text-white text-sm font-bold">✕</button>
-            </div>
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="text-[11px] text-gray-300 block mb-1">Session ID:</label>
-                    <input type="text" id="popup-session-id" placeholder="sessionid=..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
-                </div>
-            </div>
-            <div class="flex gap-3 pt-2">
-                <button type="button" onclick="submitAddAccount()" class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">CONNECT ⚡</button>
-                <button type="button" onclick="closeAddAccountModal()" class="px-4 py-2.5 bg-gray-900 hover:bg-gray-800 font-bold text-xs rounded-xl text-gray-300 border border-red-900">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- TASK CONFIGURATION & GC SELECTION POPUP MODAL -->
-    <div id="task-config-modal" class="fixed inset-0 z-50 items-center justify-center bg-black/85 backdrop-blur-md p-4 hidden">
-        <div class="glass-cyber max-w-lg w-full p-6 rounded-3xl neon-border space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-red-950 pb-3">
-                <div>
-                    <h3 id="modal-account-title" class="text-base font-bold text-red-500">Configure Task & GCs</h3>
-                    <p class="text-[10px] text-gray-400">Fetched GCs Count: <span id="modal-gc-count" class="text-emerald-400 font-bold">0</span></p>
-                </div>
-                <button type="button" onclick="closeTaskModal()" class="text-gray-400 hover:text-white text-sm font-bold">✕</button>
-            </div>
-
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="text-red-400 block mb-1">Spam Message Box / Text:</label>
-                    <textarea id="modal-spam-text" rows="2" placeholder="Enter spam message..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500"></textarea>
-                </div>
-                <div>
-                    <label class="text-pink-400 block mb-1">Name Changer Text (NC):</label>
-                    <input type="text" id="modal-nc-text" placeholder="Enter NC text..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
-                </div>
-                <div>
-                    <label class="text-cyan-400 block mb-1">Delay Per Message/GC (Seconds):</label>
-                    <input type="number" id="modal-delay" value="3" class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
-                </div>
-
-                <!-- GC Selection List with Select All -->
-                <div class="bg-black/60 p-3 rounded-2xl border border-red-950 space-y-2">
-                    <div class="flex justify-between items-center border-b border-red-950 pb-2">
-                        <span class="text-xs font-bold text-red-400">Select GCs List</span>
-                        <label class="flex items-center gap-1.5 text-[10px] text-gray-300 cursor-pointer">
-                            <input type="checkbox" id="modal-select-all" onclick="toggleModalSelectAll(this)" class="accent-red-600"> Select All
-                        </label>
-                    </div>
-                    <div id="modal-gc-list" class="space-y-2 max-h-40 overflow-y-auto pr-1">
-                        <p class="text-[11px] text-gray-500 italic">Loading GCs...</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex gap-3 pt-2">
-                <button type="button" onclick="executeModalTask()" class="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">START TASK 🚀</button>
-                <button type="button" onclick="closeTaskModal()" class="px-4 py-3 bg-gray-900 hover:bg-gray-800 font-bold text-xs rounded-xl text-gray-300 border border-red-900">Cancel</button>
-            </div>
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <h3 id="modal-title" style="color:#ffffff;margin-bottom:15px;font-size:18px;">🕷️ Configure Playwright Task</h3>
+            <div id="modal-form-content"></div>
+            <button class="save-btn" onclick="saveTask()">Save & Deploy Task</button>
+            <button class="close-modal-btn" onclick="closeModal()">Cancel</button>
         </div>
     </div>
 
     <script>
-        let activeAccounts = [];
-        let currentActiveIdx = null;
+        let fetchedGCsList = [];
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.module-section').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`section-${tabName}`).classList.remove('hidden');
-        }
-
-        function openAddAccountModal() { document.getElementById("add-account-modal").style.display = "flex"; }
-        function closeAddAccountModal() { document.getElementById("add-account-modal").style.display = "none"; }
-
-        async function submitAddAccount() {
-            const sessionIdInput = document.getElementById("popup-session-id").value.trim();
-            if(!sessionIdInput) { alert("Please enter session ID!"); return; }
-
-            const fd = new URLSearchParams();
-            fd.append("session_id", sessionIdInput);
-
-            try {
-                const res = await fetch("/api/insta/connect-session", { method: "POST", body: fd });
-                const data = await res.json();
-                if(data.success) {
-                    activeAccounts.push({ 
-                        sessionId: sessionIdInput, 
-                        username: data.username, 
-                        status: "Connected",
-                        gcs: [] 
-                    });
-                    renderAccounts();
-                    closeAddAccountModal();
-                    document.getElementById("popup-session-id").value = "";
-                } else {
-                    alert(data.message || "Invalid Session ID!");
-                }
-            } catch(e) {
-                alert("Connection error: " + e);
+        function switchBase(b){
+            document.querySelectorAll('.base-btn').forEach(x=>x.classList.remove('active'));
+            document.querySelectorAll('.base-panel').forEach(x=>x.classList.remove('active'));
+            if(b==='ig'){
+                document.querySelectorAll('.base-btn')[0].classList.add('active');
+                document.getElementById('base-ig').classList.add('active');
+            } else {
+                document.querySelectorAll('.base-btn')[1].classList.add('active');
+                document.getElementById('base-session-mgr').classList.add('active');
+                loadDashboardSessions();
             }
         }
 
-        function renderAccounts() {
-            const container = document.getElementById("accounts-container");
-            if(activeAccounts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 italic">No Instagram accounts connected yet.</p>`;
+        function toggleAuthFields() {
+            const authType = document.getElementById('f-authtype').value;
+            if(authType === 'session') {
+                document.getElementById('sec-session').style.display = 'block';
+                document.getElementById('sec-userpass').style.display = 'none';
+            } else {
+                document.getElementById('sec-session').style.display = 'none';
+                document.getElementById('sec-userpass').style.display = 'block';
+            }
+        }
+
+        async function fetchUserGCs() {
+            const authType = document.getElementById('f-authtype').value;
+            const sessionId = document.getElementById('f-sid') ? document.getElementById('f-sid').value : '';
+            const box = document.getElementById('fetched-gcs-box');
+            box.innerHTML = '<div style="color:#ffffff;text-align:center;">🕷️ Fetching GCs via API...</div>';
+            try {
+                const res = await fetch('/api/fetch-gcs', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({auth_type: authType, session_id: sessionId})
+                });
+                const data = await res.json();
+                if(data.success && data.gcs.length > 0) {
+                    fetchedGCsList = data.gcs;
+                    renderFetchedGCsList();
+                } else {
+                    box.innerHTML = `<div style="color:var(--red);text-align:center;">${data.error || 'No GCs found'}</div>`;
+                }
+            } catch(e) {
+                box.innerHTML = `<div style="color:var(--red);text-align:center;">Failed to fetch GCs</div>`;
+            }
+        }
+
+        function renderFetchedGCsList() {
+            const box = document.getElementById('fetched-gcs-box');
+            let headerHtml = `<div class="gc-controls"><span style="color:#ffffff;">Found: (${fetchedGCsList.length})</span><div><button type="button" class="gc-action-link" onclick="selectAllGCs(true)">Select All</button></div></div>`;
+            let itemsHtml = fetchedGCsList.map((g) => `
+                <div class="gc-item" onclick="toggleGCSelection('${g.id}', event)">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="chk-gc-${g.id}" value="${g.id}">
+                        <span>🕷️ ${g.title}</span>
+                    </div>
+                    <span style="color:var(--green)">ID: ${g.id}</span>
+                </div>`).join('');
+            box.innerHTML = headerHtml + itemsHtml;
+        }
+
+        function selectAllGCs(status) {
+            fetchedGCsList.forEach(g => {
+                const chk = document.getElementById(`chk-gc-${g.id}`);
+                if(chk) chk.checked = status;
+            });
+            updateGroupsInputFromCheckboxes();
+        }
+
+        function toggleGCSelection(id, event) {
+            if(event.target.tagName === 'INPUT') return;
+            const chk = document.getElementById(`chk-gc-${id}`);
+            if(chk) {
+                chk.checked = !chk.checked;
+                updateGroupsInputFromCheckboxes();
+            }
+        }
+
+        function updateGroupsInputFromCheckboxes() {
+            const groupInput = document.getElementById('f-groups');
+            if(!groupInput) return;
+            let selectedIds = [];
+            fetchedGCsList.forEach(g => {
+                const chk = document.getElementById(`chk-gc-${g.id}`);
+                if(chk && chk.checked) { selectedIds.push(g.id); }
+            });
+            groupInput.value = selectedIds.join('\n');
+        }
+
+        function renderAuthInputs() {
+            return `
+                <div class="form-group"><label>Login Method</label>
+                    <select id="f-authtype" onchange="toggleAuthFields()">
+                        <option value="session">Session ID</option>
+                        <option value="userpass">Username / Password</option>
+                    </select>
+                </div>
+                <div id="sec-session"><div class="form-group"><label>Session ID</label><input type="text" id="f-sid"></div></div>
+                <div id="sec-userpass" style="display:none;">
+                    <div class="form-group"><label>Username</label><input type="text" id="f-user"></div>
+                    <div class="form-group"><label>Password</label><input type="password" id="f-pass"></div>
+                </div>
+                <div class="form-group" style="margin-top:5px;">
+                    <button type="button" class="fetch-gcs-btn" onclick="fetchUserGCs()">🔍 Fetch GCs Instantly via API</button>
+                    <div id="fetched-gcs-box" class="gc-results-box"><div style="color:var(--muted);text-align:center;">Click to load groups</div></div>
+                </div>`;
+        }
+
+        function openModal(type){
+            const content = document.getElementById('modal-form-content');
+            fetchedGCsList = [];
+            let ncInputsHtml = '';
+            for(let i=1; i<=6; i++){
+                ncInputsHtml += `<div class="nc-row"><input type="text" id="f-nc${i}-text" placeholder="NC${i} Title"><input type="number" id="f-nc${i}-delay" placeholder="Delay" value="30"></div>`;
+            }
+            content.innerHTML = `
+                <input type="hidden" id="m-type" value="spam">
+                <div class="form-group"><label>Bot Name</label><input type="text" id="f-name"></div>
+                ${renderAuthInputs()}
+                <div class="form-group"><label>Groups (URLs / IDs)</label><textarea id="f-groups" rows="3"></textarea></div>
+                <div class="form-group"><label>Messages (Comma separated)</label><textarea id="f-message" rows="3" placeholder="Msg 1, Msg 2"></textarea></div>
+                <div class="form-group"><label>Name Changer Configs (NC1 to NC6)</label>${ncInputsHtml}</div>
+                <div class="form-group"><label>Loop Delay (s)</label><input type="number" id="f-delay" value="2"></div>`;
+            document.getElementById('modal').classList.add('open');
+        }
+
+        function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+        async function saveTask(){
+            let body = {
+                name: document.getElementById('f-name').value,
+                auth_type: document.getElementById('f-authtype').value,
+                session_id: document.getElementById('f-sid') ? document.getElementById('f-sid').value : '',
+                groups: document.getElementById('f-groups').value,
+                message: document.getElementById('f-message').value,
+                delay: parseFloat(document.getElementById('f-delay').value) || 2
+            };
+            let ncConfigs = [];
+            for(let i=1; i<=6; i++){
+                let txt = document.getElementById(`f-nc${i}-text`).value.trim();
+                let del = parseFloat(document.getElementById(`f-nc${i}-delay`).value) || 30;
+                if(txt) { ncConfigs.push({text: txt, delay: del}); }
+            }
+            body.nc_configs = ncConfigs;
+            await fetch('/api/accounts', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+            closeModal();
+            loadAllData();
+        }
+
+        async function controlAction(type, id, action){
+            await fetch(`/api/${type}/${id}/${action}`, {method:'POST'});
+            loadAllData();
+        }
+
+        async function deleteItem(type, id){
+            if(!confirm('Delete?')) return;
+            await fetch(`/api/${type}/${id}`, {method:'DELETE'});
+            loadAllData();
+        }
+
+        async function loadDashboardSessions(){
+            try {
+                const res = await fetch('/api/dashboard-sessions');
+                const data = await res.json();
+                const listEl = document.getElementById('list-dashboard-sessions');
+                if(!data.success || !data.sessions.length){
+                    listEl.innerHTML = `<div style="text-align:center;padding:20px;">NO SESSIONS SAVED</div>`;
+                    return;
+                }
+                listEl.innerHTML = data.sessions.map((sess, idx) => `
+                    <div class="account-card"><div class="card-header"><div class="card-title">Session #${idx+1}</div>
+                    <button class="btn btn-del" onclick="deleteDashboardSession(${idx})">Delete</button></div></div>`).join('');
+            } catch(e){}
+        }
+
+        async function saveDashboardSession(){
+            const sess = document.getElementById('dashboard-new-session').value.trim();
+            if(!sess) return;
+            await fetch('/api/dashboard-sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({session: sess})});
+            document.getElementById('dashboard-new-session').value = '';
+            loadDashboardSessions();
+        }
+
+        async function deleteDashboardSession(idx){
+            await fetch(`/api/dashboard-sessions/${idx}`, {method:'DELETE'});
+            loadDashboardSessions();
+        }
+
+        async function loadAllData(){
+            const r = await fetch('/api/all-status');
+            const d = await r.json();
+            renderCards('spam', d.accounts, d.statuses);
+            updateLogs();
+        }
+
+        function renderCards(type, items, statuses){
+            const list = document.getElementById('list-'+type);
+            list.innerHTML = '';
+            if(!items || Object.keys(items).length === 0){
+                list.innerHTML = `<div style="text-align:center;padding:25px;">NO ACTIVE TASKS</div>`;
                 return;
             }
-            let html = "";
-            activeAccounts.forEach((acc, idx) => {
-                html += `
-                    <div class="bg-black/60 border border-red-900 p-4 rounded-2xl space-y-3 text-xs neon-border">
-                        <div class="flex justify-between items-center border-b border-red-950 pb-2">
-                            <span class="text-red-400 font-bold">@${acc.username}</span>
-                            <span class="text-[9px] bg-red-950 text-red-300 px-2 py-0.5 rounded">${acc.status}</span>
-                        </div>
-                        <div class="flex gap-2 items-center">
-                            <button type="button" onclick="fetchAndOpenModal(${idx})" class="flex-1 py-2 bg-red-600 hover:bg-red-500 font-bold text-xs rounded-xl text-white neon-btn">Fetch GCs & Configure Task 📥</button>
-                            <button type="button" onclick="deleteSession(${idx})" class="px-3 py-2 bg-red-950 hover:bg-red-900 font-bold text-xs rounded-xl text-red-400 border border-red-800">DELETE 🗑️</button>
+            for(const id in items){
+                const item = items[id];
+                const st = statuses[id] || {running:false, sent:0, failed:0, last_action:'Idle'};
+                const running = st.running;
+                const card = document.createElement('div');
+                card.className = `account-card ${running?'running':''}`;
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-title"><div class="status-dot ${running?'running':''}"></div>${item.name}</div>
+                        <div class="card-actions">
+                            ${!running?`<button class="btn btn-start" onclick="controlAction('accounts','${id}','start')">▶ Start</button>`:`<button class="btn btn-stop" onclick="controlAction('accounts','${id}','stop')">■ Stop</button>`}
+                            <button class="btn btn-del" onclick="deleteItem('accounts','${id}')">✕</button>
                         </div>
                     </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        function deleteSession(idx) {
-            if(confirm("Are you sure you want to delete this session?")) {
-                activeAccounts.splice(idx, 1);
-                renderAccounts();
+                    <div class="stats-row">
+                        <div class="stat-item"><div class="stat-label">Sent</div><div class="stat-val" style="color:var(--green)">${st.sent||0}</div></div>
+                        <div class="stat-item"><div class="stat-label">Failed</div><div class="stat-val" style="color:var(--red)">${st.failed||0}</div></div>
+                    </div>
+                    <div class="status-bar">▸ Status: <span>${st.last_action||'Idle'}</span></div>
+                    <div class="console" id="cons-spam-${id}"></div>`;
+                list.appendChild(card);
             }
         }
 
-        // Fetch GCs and open popup modal
-        async function fetchAndOpenModal(idx) {
-            currentActiveIdx = idx;
-            const acc = activeAccounts[idx];
-
-            document.getElementById("modal-account-title").innerText = `Account: @${acc.username}`;
-            document.getElementById("task-config-modal").style.display = "flex";
-            document.getElementById("modal-gc-list").innerHTML = `<p class="text-[11px] text-gray-400 italic">Fetching real GCs...</p>`;
-
-            const fd = new URLSearchParams();
-            fd.append("session_id", acc.sessionId);
-
+        async function updateLogs(){
             try {
-                const res = await fetch("/api/insta/fetch-gcs", { method: "POST", body: fd });
-                const data = await res.json();
-                
-                if(data.success && data.gcs.length > 0) {
-                    acc.gcs = data.gcs;
-                    document.getElementById("modal-gc-count").innerText = acc.gcs.length;
-                    
-                    let html = "";
-                    acc.gcs.forEach((gc, gIdx) => {
-                        html += `
-                            <label class="flex items-center justify-between bg-black/80 p-2.5 rounded-xl border border-red-950 cursor-pointer hover:border-red-600">
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" name="modal-gc-cb" value="${gc.id}" class="accent-red-600">
-                                    <span class="text-white font-bold">${gc.name}</span>
-                                </div>
-                                <span class="text-[10px] text-gray-400">${gc.members} members</span>
-                            </label>
-                        `;
-                    });
-                    document.getElementById("modal-gc-list").innerHTML = html;
-                } else {
-                    document.getElementById("modal-gc-count").innerText = "0";
-                    document.getElementById("modal-gc-list").innerHTML = `<p class="text-[11px] text-red-400">No GCs found for this session!</p>`;
-                }
-            } catch(e) {
-                document.getElementById("modal-gc-list").innerHTML = `<p class="text-[11px] text-red-400">Error fetching GCs: ${e}</p>`;
-            }
-        }
-
-        function closeTaskModal() {
-            document.getElementById("task-config-modal").style.display = "none";
-        }
-
-        function toggleModalSelectAll(master) {
-            document.querySelectorAll('input[name="modal-gc-cb"]').forEach(cb => cb.checked = master.checked);
-        }
-
-        async function executeModalTask() {
-            if(currentActiveIdx === null) return;
-            const acc = activeAccounts[currentActiveIdx];
-
-            const spamText = document.getElementById("modal-spam-text").value.trim();
-            const ncText = document.getElementById("modal-nc-text").value.trim();
-            const delay = document.getElementById("modal-delay").value.trim() || "3";
-
-            const selectedGCs = [];
-            document.querySelectorAll('input[name="modal-gc-cb"]:checked').forEach(cb => selectedGCs.push(cb.value));
-
-            if(selectedGCs.length === 0) { alert("Please select at least one GC!"); return; }
-
-            const fd = new URLSearchParams();
-            fd.append("task_type", "multisession_gc_task");
-            fd.append("session_id", acc.sessionId);
-            fd.append("target_data", `${spamText}|${delay}|${ncText}|${selectedGCs.join(',')}`);
-
-            const res = await fetch("/api/insta/start-task", { method: "POST", body: fd });
-            const data = await res.json();
-            
-            acc.status = "Running 24/7 🚀";
-            renderAccounts();
-            closeTaskModal();
-            alert(data.message || "Task started successfully on selected GCs!");
-        }
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            const fd = new URLSearchParams();
-            fd.append("username", username);
-            fd.append("password", password);
-            
-            try {
-                const res = await fetch("/api/login", { method: "POST", body: fd });
-                const data = await res.json();
-                if(data.success) {
-                    document.getElementById("login-modal").style.display = "none";
-                    document.getElementById("dashboard").style.display = "block";
-                    document.getElementById("user-role-badge", "").innerText = `ROLE: ${data.role.toUpperCase()}`;
-                    setInterval(fetchAllLogs, 2000);
-                } else {
-                    const err = document.getElementById("login-error");
-                    err.innerText = data.message;
-                    err.style.display = "block";
-                }
-            } catch(err) {
-                alert("Login failed: " + err);
-            }
-        }
-
-        async function pairWhatsApp() {
-            const phone = document.getElementById("wa-phone").value.trim();
-            if(!phone) { alert("Please enter phone number!"); return; }
-            const fd = new URLSearchParams();
-            fd.append("phone", phone);
-            const res = await fetch("/api/whatsapp/pair", { method: "POST", body: fd });
-            const data = await res.json();
-            document.getElementById("wa-result").innerText = `Pair Code: ${data.pair_code}`;
-        }
-
-        async function deployTelegram() {
-            const tokens = document.getElementById("tg-tokens").value.trim();
-            const owner = document.getElementById("tg-owner").value.trim();
-            if(!tokens || !owner) { alert("Please enter tokens and owner ID!"); return; }
-            const fd = new URLSearchParams();
-            fd.append("tokens", tokens);
-            fd.append("owner_id", owner);
-            const res = await fetch("/api/telegram/deploy", { method: "POST", body: fd });
-            const data = await res.json();
-            if(data.success) document.getElementById("tg-status").innerText = `Deployed ${data.active_count} SONA bots successfully!`;
-        }
-
-        async function fetchAllLogs() {
-            try {
-                const res = await fetch("/api/logs/all");
-                const data = await res.json();
-                ["instagram", "telegram", "whatsapp"].forEach(mod => {
-                    const el = document.getElementById(`logs-${mod}`);
-                    if(el && data.logs[mod]) {
-                        el.innerHTML = data.logs[mod].map(l => `<div>> ${l}</div>`).join('');
+                const r = await fetch('/api/logs-all');
+                const logsMap = await r.json();
+                for(const id in logsMap){
+                    const consEl = document.getElementById(`cons-spam-${id}`);
+                    if(consEl && logsMap[id]){
+                        consEl.innerHTML = logsMap[id].map(l=>`<div class="console-line">${l}</div>`).join('');
+                        consEl.scrollTop = consEl.scrollHeight;
                     }
-                });
-            } catch(e) {
-                console.error("Log fetch error");
-            }
+                }
+            } catch(e){}
         }
+
+        loadAllData();
+        setInterval(loadAllData, 3000);
+        setInterval(updateLogs, 1500);
     </script>
 </body>
 </html>
