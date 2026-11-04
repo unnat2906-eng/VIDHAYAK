@@ -1,38 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" style="font-size: 430%;">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNNAT | SONA PANEL</title>
+    <title>UNNAT | SONA - CYBERPUNK RED</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        :root { font-size: 16px; } /* Base custom DPI scale controlled via root/html */
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050509; color: #f3f4f6; min-height: 100vh; font-size: 0.85rem; }
-        .ios-bold { font-weight: 800; letter-spacing: -0.025em; }
-        .glass-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
-        .btn-3d { transition: all 0.2s ease; box-shadow: 0 4px 0 #0284c7; }
-        .btn-3d:active { transform: translateY(4px); box-shadow: 0 0 0 #0284c7; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&display=swap');
+        body { font-family: 'Orbitron', sans-serif; background: #030002; color: #f3f4f6; min-height: 100vh; }
+        .neon-glow { box-shadow: 0 0 20px rgba(255, 0, 60, 0.4), inset 0 0 15px rgba(255, 0, 60, 0.2); }
+        .neon-border { border: 1px solid rgba(255, 0, 60, 0.6); }
+        .neon-btn { transition: all 0.2s ease; box-shadow: 0 0 10px rgba(255, 0, 60, 0.6); }
+        .neon-btn:hover { box-shadow: 0 0 20px rgba(255, 0, 60, 0.9); background-color: #ff003c; color: #fff; }
+        .glass-cyber { background: rgba(10, 2, 5, 0.9); backdrop-filter: blur(16px); }
     </style>
-    <script>
-        // Custom DPI multiplier set to 430 scale equivalent styling
-        document.documentElement.style.fontSize = '13.5px';
-    </script>
 </head>
 <body class="p-4 md:p-6 pb-24">
 
     <!-- LOGIN MODAL -->
     <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4">
-        <div class="glass-card max-w-md w-full p-8 rounded-3xl text-center border border-cyan-500/30 shadow-2xl">
-            <h1 class="text-3xl ios-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500 mb-1">UNNAT | SONA</h1>
-            <p class="text-xs text-pink-400 tracking-widest font-bold mb-6">PANEL ❤</p>
-            <div id="device-badge" class="mb-6 py-2 px-4 rounded-xl bg-black/60 border border-gray-800 text-xs text-cyan-300 ios-bold">Detecting device...</div>
+        <div class="glass-cyber max-w-md w-full p-8 rounded-2xl text-center neon-border neon-glow shadow-2xl">
+            <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500 mb-1">UNNAT | SONA</h1>
+            <p class="text-[10px] text-red-400 tracking-widest font-bold mb-6">[ CYBERPUNK RED V5 ]</p>
             <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
-                <input type="text" id="username" placeholder="Username (UNNAT or USER)" required class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-cyan-400">
-                <input type="password" id="password" placeholder="Password" required class="w-full bg-black/60 border border-gray-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-cyan-400">
-                <button type="submit" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 btn-3d ios-bold text-sm rounded-xl text-white">ENTER PANEL 🚀</button>
+                <input type="text" id="username" placeholder="USERNAME (UNNAT/USER)" required class="w-full bg-black/80 border border-red-900 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-red-500">
+                <input type="password" id="password" placeholder="PASSWORD" required class="w-full bg-black/80 border border-red-900 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-red-500">
+                <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">ACCESS PANEL ⚡</button>
             </form>
-            <p id="login-error" class="text-pink-400 text-xs mt-3 hidden"></p>
+            <p id="login-error" class="text-red-400 text-xs mt-3 hidden"></p>
         </div>
     </div>
 
@@ -40,176 +35,183 @@
     <div id="dashboard" class="max-w-7xl mx-auto space-y-6 hidden">
         
         <!-- HEADER -->
-        <header class="glass-card p-5 rounded-3xl flex justify-between items-center border border-cyan-500/20">
+        <header class="glass-cyber p-5 rounded-2xl flex justify-between items-center neon-border neon-glow">
             <div>
-                <h1 class="text-xl ios-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">UNNAT | SONA ❤</h1>
-                <p id="user-role-badge" class="text-[11px] text-cyan-300 mt-0.5 ios-bold">Role: Loading...</p>
+                <h1 class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500">UNNAT | SONA ❤</h1>
+                <p id="user-role-badge" class="text-[10px] text-red-400 mt-0.5 font-bold">ROLE: LOADING...</p>
             </div>
-            <div class="bg-cyan-950/60 border border-cyan-500/40 px-3 py-1.5 rounded-xl text-[11px] text-cyan-300 ios-bold">DPI 430 | LIVE 24/7 ⚡</div>
+            <div class="bg-red-950/60 border border-red-500/40 px-3 py-1.5 rounded-xl text-[10px] text-red-300 font-bold">SYSTEM ONLINE ⚡</div>
         </header>
 
-        <!-- GRID LAYOUT FOR SECTIONS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- MAIN MODULE NAV BUTTONS (ICONS/CARDS TO OPEN SEPARATE SECTIONS) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button onclick="switchTab('insta')" class="glass-cyber p-4 rounded-2xl neon-border flex items-center gap-4 text-left hover:border-red-500 transition">
+                <div class="p-3 bg-red-950/80 rounded-xl text-red-400 text-xl">📸</div>
+                <div>
+                    <h3 class="text-sm font-bold text-red-400">INSTAGRAM MODULE</h3>
+                    <p class="text-[10px] text-gray-400">Multi-Session, Multi-GC & Add/Remove Users</p>
+                </div>
+            </button>
 
-            <!-- 1. INSTAGRAM & GC CREATOR SECTION -->
-            <div class="glass-card p-5 rounded-3xl space-y-4 border border-cyan-500/30">
-                <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                    <h3 class="text-sm ios-bold text-cyan-400">📸 INSTAGRAM & GC CREATOR</h3>
-                    <button type="button" onclick="openAddAccountModal()" class="px-3 py-1.5 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-[10px] rounded-lg text-white">+ Add Account</button>
+            <button onclick="switchTab('tele')" class="glass-cyber p-4 rounded-2xl neon-border flex items-center gap-4 text-left hover:border-red-500 transition">
+                <div class="p-3 bg-red-950/80 rounded-xl text-red-400 text-xl">🤖</div>
+                <div>
+                    <h3 class="text-sm font-bold text-red-400">TELEGRAM MODULE</h3>
+                    <p class="text-[10px] text-gray-400">Unnatv5 Multi-Bot Daemon Manager</p>
                 </div>
-                
-                <div id="accounts-container" class="space-y-3">
-                    <p class="text-xs text-gray-400 italic">No account connected. Click "+ Add Account".</p>
-                </div>
+            </button>
 
-                <div class="space-y-1 pt-2">
-                    <h4 class="text-[10px] ios-bold uppercase text-cyan-300">Instagram Live Logs</h4>
-                    <div id="logs-instagram" class="bg-black/90 p-2.5 rounded-xl border border-gray-800 font-mono text-[10px] text-cyan-400 h-28 overflow-y-auto"></div>
+            <button onclick="switchTab('whatsapp')" class="glass-cyber p-4 rounded-2xl neon-border flex items-center gap-4 text-left hover:border-red-500 transition">
+                <div class="p-3 bg-red-950/80 rounded-xl text-red-400 text-xl">💬</div>
+                <div>
+                    <h3 class="text-sm font-bold text-red-400">WHATSAPP MODULE</h3>
+                    <p class="text-[10px] text-gray-400">Pairing Code & Messaging Automation</p>
                 </div>
-            </div>
-
-            <!-- 2. TELEGRAM SECTION -->
-            <div class="glass-card p-5 rounded-3xl space-y-4 border border-blue-500/30">
-                <div class="border-b border-gray-800 pb-3">
-                    <h3 class="text-sm ios-bold text-blue-400">🤖 TELEGRAM</h3>
-                    <p class="text-[10px] text-gray-400">Unnatv5 Multi-Bot Manager</p>
-                </div>
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-[10px] text-gray-400 block mb-1">Bot Tokens (comma separated):</label>
-                        <textarea id="tg-tokens" rows="2" placeholder="TOKEN1, TOKEN2..." class="w-full bg-black/70 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-400"></textarea>
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-gray-400 block mb-1">Owner User ID:</label>
-                        <input type="text" id="tg-owner" placeholder="Owner ID" class="w-full bg-black/70 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-400">
-                    </div>
-                    <button type="button" onclick="deployTelegram()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 btn-3d ios-bold text-xs rounded-xl text-white">Deploy Daemons 🚀</button>
-                </div>
-                <div id="tg-status" class="text-[10px] text-blue-300"></div>
-                <div class="space-y-1 pt-1">
-                    <h4 class="text-[10px] ios-bold uppercase text-blue-300">Live Logs</h4>
-                    <div id="logs-telegram" class="bg-black/90 p-2.5 rounded-xl border border-gray-800 font-mono text-[10px] text-blue-400 h-28 overflow-y-auto"></div>
-                </div>
-            </div>
-
-            <!-- 3. WHATSAPP SECTION -->
-            <div class="glass-card p-5 rounded-3xl space-y-4 border border-emerald-500/30">
-                <div class="border-b border-gray-800 pb-3">
-                    <h3 class="text-sm ios-bold text-emerald-400">💬 WHATSAPP</h3>
-                    <p class="text-[10px] text-gray-400">Pairing & Automation</p>
-                </div>
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-[10px] text-gray-400 block mb-1">Phone Number (with Country Code):</label>
-                        <input type="text" id="wa-phone" placeholder="e.g. 919876543210" class="w-full bg-black/70 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-400">
-                    </div>
-                    <button type="button" onclick="pairWhatsApp()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 btn-3d ios-bold text-xs rounded-xl text-white">Generate Pair Code 🔗</button>
-                </div>
-                <div id="wa-result" class="text-xs text-emerald-300 font-mono"></div>
-                <div class="space-y-1 pt-1">
-                    <h4 class="text-[10px] ios-bold uppercase text-emerald-300">Live Logs</h4>
-                    <div id="logs-whatsapp" class="bg-black/90 p-2.5 rounded-xl border border-gray-800 font-mono text-[10px] text-emerald-400 h-28 overflow-y-auto"></div>
-                </div>
-            </div>
-
+            </button>
         </div>
 
-        <!-- LOWER GRID FOR USERS, ACTIVITY & RUNTIME -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-            <!-- 4. LOGIN USERS SECTION -->
-            <div class="glass-card p-5 rounded-3xl space-y-3 border border-purple-500/30">
-                <h3 class="text-sm ios-bold text-purple-400">👤 LOGIN USERS</h3>
-                <div class="space-y-2 text-xs text-gray-300 bg-black/50 p-3 rounded-2xl border border-gray-800">
-                    <div class="flex justify-between items-center">
-                        <span class="text-cyan-300 font-bold">UNNAT (Owner)</span>
-                        <span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded">Active</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-pink-300 font-bold">USER (Restricted)</span>
-                        <span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded">Active</span>
-                    </div>
+        <!-- ================= SECTION 1: INSTAGRAM ================= -->
+        <div id="section-insta" class="module-section glass-cyber p-6 rounded-3xl space-y-6 neon-border">
+            <div class="flex justify-between items-center border-b border-red-950 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-red-500">📸 INSTAGRAM MULTI-SESSION & MULTI-GC MANAGER</h2>
+                    <p class="text-xs text-gray-400">Manage sessions, custom text, name changer & GC user management.</p>
                 </div>
+                <button type="button" onclick="openAddAccountModal()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">+ Add Account</button>
+            </div>
+            
+            <div id="accounts-container" class="space-y-4">
+                <p class="text-xs text-gray-400 italic">No Instagram accounts connected yet. Click "+ Add Account".</p>
             </div>
 
-            <!-- 5. PANEL ACTIVITY SECTION -->
-            <div class="glass-card p-5 rounded-3xl space-y-3 border border-amber-500/30">
-                <h3 class="text-sm ios-bold text-amber-400">⚡ PANEL ACTIVITY</h3>
-                <div id="panel-activity-box" class="bg-black/90 p-3 rounded-2xl border border-gray-800 font-mono text-[10px] text-amber-300 h-28 overflow-y-auto">
-                    <div>> System boot successful...</div>
-                    <div>> DPI 430 scaled layout loaded...</div>
+            <div class="space-y-2 pt-2">
+                <h4 class="text-xs font-bold uppercase text-red-400">Instagram Live Logs</h4>
+                <div id="logs-instagram" class="bg-black p-3 rounded-xl border border-red-950 font-mono text-[11px] text-red-400 h-32 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- ================= SECTION 2: TELEGRAM ================= -->
+        <div id="section-tele" class="module-section glass-cyber p-6 rounded-3xl space-y-6 neon-border hidden">
+            <div class="border-b border-red-950 pb-4">
+                <h2 class="text-lg font-bold text-red-500">🤖 TELEGRAM MULTI-BOT MANAGER</h2>
+                <p class="text-xs text-gray-400">Deploy 24/7 Telegram daemons using unnatv5 script.</p>
+            </div>
+            <div class="space-y-4 max-w-xl">
+                <div>
+                    <label class="text-xs text-gray-300 block mb-1">Bot Tokens (comma separated):</label>
+                    <textarea id="tg-tokens" rows="2" placeholder="TOKEN1, TOKEN2..." class="w-full bg-black/80 border border-red-900 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-red-500"></textarea>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-300 block mb-1">Owner Telegram User ID:</label>
+                    <input type="text" id="tg-owner" placeholder="Owner User ID" class="w-full bg-black/80 border border-red-900 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-red-500">
+                </div>
+                <button type="button" onclick="deployTelegram()" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">Deploy 24/7 Daemons 🚀</button>
+            </div>
+            <div id="tg-status" class="text-xs text-red-300 font-mono"></div>
+            <div class="space-y-2 pt-2">
+                <h4 class="text-xs font-bold uppercase text-red-400">Telegram Live Logs</h4>
+                <div id="logs-telegram" class="bg-black p-3 rounded-xl border border-red-950 font-mono text-[11px] text-red-400 h-32 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- ================= SECTION 3: WHATSAPP ================= -->
+        <div id="section-whatsapp" class="module-section glass-cyber p-6 rounded-3xl space-y-6 neon-border hidden">
+            <div class="border-b border-red-950 pb-4">
+                <h2 class="text-lg font-bold text-red-500">💬 WHATSAPP BOT MANAGER</h2>
+                <p class="text-xs text-gray-400">Pairing code generation and automation setup.</p>
+            </div>
+            <div class="space-y-4 max-w-xl">
+                <div>
+                    <label class="text-xs text-gray-300 block mb-1">WhatsApp Phone Number (with Country Code):</label>
+                    <input type="text" id="wa-phone" placeholder="e.g. 919876543210" class="w-full bg-black/80 border border-red-900 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-red-500">
+                </div>
+                <button type="button" onclick="pairWhatsApp()" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">Generate Pair Code 🔗</button>
+            </div>
+            <div id="wa-result" class="text-xs text-red-300 font-mono"></div>
+            <div class="space-y-2 pt-2">
+                <h4 class="text-xs font-bold uppercase text-red-400">WhatsApp Live Logs</h4>
+                <div id="logs-whatsapp" class="bg-black p-3 rounded-xl border border-red-950 font-mono text-[11px] text-red-400 h-32 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- PANEL STATUS FOOTER GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="glass-cyber p-5 rounded-3xl neon-border space-y-3">
+                <h3 class="text-xs font-bold text-red-400 uppercase">⚡ PANEL ACTIVITY</h3>
+                <div class="bg-black p-3 rounded-xl border border-red-950 font-mono text-[11px] text-red-300 h-24 overflow-y-auto">
+                    <div>> Cyberpunk neon red theme loaded...</div>
+                    <div>> Multi-session instance active...</div>
                 </div>
             </div>
-
-            <!-- 6. PANEL RUNTIME SECTION -->
-            <div class="glass-card p-5 rounded-3xl space-y-3 border border-rose-500/30">
-                <h3 class="text-sm ios-bold text-rose-400">⏳ PANEL RUNTIME</h3>
-                <div class="bg-black/50 p-3 rounded-2xl border border-gray-800 space-y-2 text-xs">
-                    <div class="flex justify-between text-gray-400">
-                        <span>Status:</span>
-                        <span class="text-emerald-400 font-bold">24/7 ONLINE ⚡</span>
-                    </div>
-                    <div class="flex justify-between text-gray-400">
-                        <span>Uptime:</span>
-                        <span id="uptime-counter" class="text-rose-300 font-mono">00:00:00</span>
-                    </div>
-                    <div class="flex justify-between text-gray-400">
-                        <span>Environment:</span>
-                        <span class="text-cyan-300">Render Cloud</span>
-                    </div>
+            <div class="glass-cyber p-5 rounded-3xl neon-border space-y-3">
+                <h3 class="text-xs font-bold text-red-400 uppercase">⏳ PANEL RUNTIME & USERS</h3>
+                <div class="bg-black/60 p-3 rounded-2xl border border-red-950 space-y-1 text-xs text-gray-300">
+                    <div class="flex justify-between"><span>Status:</span><span class="text-red-500 font-bold">ONLINE 24/7</span></div>
+                    <div class="flex justify-between"><span>Uptime:</span><span id="uptime-counter" class="font-mono text-pink-400">00:00:00</span></div>
+                    <div class="flex justify-between"><span>Active Roles:</span><span class="text-red-400">UNNAT (Owner) / USER</span></div>
                 </div>
             </div>
-
         </div>
 
     </div>
 
-    <!-- ADD INSTAGRAM ACCOUNT & GC CREATOR MODAL -->
+    <!-- ADD INSTAGRAM ACCOUNT & MULTI-GC / ADD-REMOVE USERS MODAL -->
     <div id="add-account-modal" class="fixed inset-0 z-50 items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
-        <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-pink-500/40 space-y-4 shadow-2xl">
+        <div class="glass-cyber max-w-lg w-full p-6 rounded-3xl neon-border space-y-4 shadow-2xl">
             <div class="flex justify-between items-center">
-                <h3 class="text-base ios-bold text-pink-400">Instagram GC Creator & Session Hub</h3>
+                <h3 class="text-base font-bold text-red-500">Instagram Multi-Session & GC Setup</h3>
                 <button type="button" onclick="closeAddAccountModal()" class="text-gray-400 hover:text-white text-sm font-bold">✕</button>
             </div>
             
-            <div class="space-y-3 text-xs">
+            <div class="space-y-3 text-xs max-h-[70vh] overflow-y-auto pr-1">
                 <div>
                     <label class="text-[11px] text-gray-300 block mb-1">Session ID:</label>
-                    <input type="text" id="popup-session-id" placeholder="sessionid=..." class="w-full bg-black/60 border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-400">
+                    <input type="text" id="popup-session-id" placeholder="sessionid=..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
                 </div>
                 <div>
                     <label class="text-[11px] text-gray-300 block mb-1">GC Count:</label>
-                    <input type="number" id="popup-gc-count" placeholder="e.g. 5" class="w-full bg-black/60 border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-400">
+                    <input type="number" id="popup-gc-count" placeholder="e.g. 3" class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
                 </div>
                 <div>
                     <label class="text-[11px] text-gray-300 block mb-1">GC Delivery Custom Text:</label>
-                    <input type="text" id="popup-gc-text" placeholder="Enter custom message text..." class="w-full bg-black/60 border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-400">
+                    <input type="text" id="popup-gc-text" placeholder="Enter message text..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
                 </div>
                 <div>
                     <label class="text-[11px] text-gray-300 block mb-1">Custom NC Text (Name Changer):</label>
-                    <input type="text" id="popup-nc-text" placeholder="Enter NC text..." class="w-full bg-black/60 border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-400">
+                    <input type="text" id="popup-nc-text" placeholder="Enter NC text..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
                 </div>
                 <div>
                     <label class="text-[11px] text-gray-300 block mb-1">Delay Per PC (Seconds):</label>
-                    <input type="number" id="popup-delay" placeholder="e.g. 3" class="w-full bg-black/60 border border-gray-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-400">
+                    <input type="number" id="popup-delay" placeholder="e.g. 3" class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-red-950">
+                    <div>
+                        <label class="text-[11px] text-emerald-400 block mb-1">Add Users (UserIDs comma separated):</label>
+                        <input type="text" id="popup-add-users" placeholder="userid1, userid2..." class="w-full bg-black/80 border border-emerald-900 rounded-xl p-2 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="text-[11px] text-red-400 block mb-1">Remove Users (UserIDs comma separated):</label>
+                        <input type="text" id="popup-remove-users" placeholder="userid1, userid2..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2 text-white focus:outline-none focus:border-red-500">
+                    </div>
                 </div>
             </div>
 
             <div class="flex gap-3 pt-2">
-                <button type="button" onclick="submitAddAccount()" class="flex-1 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 btn-3d ios-bold text-xs rounded-xl text-white">SAVE 🚀</button>
-                <button type="button" onclick="closeAddAccountModal()" class="px-4 py-2.5 bg-gray-800 hover:bg-gray-700 ios-bold text-xs rounded-xl text-gray-300">Cancel</button>
+                <button type="button" onclick="submitAddAccount()" class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">SAVE CONFIG ⚡</button>
+                <button type="button" onclick="closeAddAccountModal()" class="px-4 py-2.5 bg-gray-900 hover:bg-gray-800 font-bold text-xs rounded-xl text-gray-300 border border-gray-800">Cancel</button>
             </div>
         </div>
     </div>
 
     <script>
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const badge = document.getElementById("device-badge");
-        badge.innerText = isIOS ? "iOS Device Connected (DPI 430 Mode)" : "Desktop / Android Connected (DPI 430)";
-        if(isIOS) badge.classList.add("ios-bold");
-
         let activeAccounts = [];
         let startTime = Date.now();
+
+        // Switch between modules
+        function switchTab(tabName) {
+            document.querySelectorAll('.module-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`section-${tabName}`).classList.remove('hidden');
+        }
 
         setInterval(() => {
             const diff = Math.floor((Date.now() - startTime) / 1000);
@@ -234,7 +236,7 @@
                 if(data.success) {
                     document.getElementById("login-modal").style.display = "none";
                     document.getElementById("dashboard").style.display = "block";
-                    document.getElementById("user-role-badge").innerText = `Role: ${data.role.toUpperCase()}`;
+                    document.getElementById("user-role-badge").innerText = `ROLE: ${data.role.toUpperCase()}`;
                     setInterval(fetchAllLogs, 2000);
                 } else {
                     const err = document.getElementById("login-error");
@@ -255,6 +257,8 @@
             const gcText = document.getElementById("popup-gc-text").value.trim();
             const ncText = document.getElementById("popup-nc-text").value.trim();
             const delay = document.getElementById("popup-delay").value.trim();
+            const addUsers = document.getElementById("popup-add-users").value.trim();
+            const removeUsers = document.getElementById("popup-remove-users").value.trim();
 
             if(!sessionIdInput) { alert("Please enter session ID!"); return; }
 
@@ -272,16 +276,12 @@
                         gcText: gcText || '',
                         ncText: ncText || '',
                         delay: delay || '3',
+                        addUsers: addUsers || '',
+                        removeUsers: removeUsers || '',
                         status: "Configured & Saved"
                     });
                     renderAccounts();
                     closeAddAccountModal();
-                    // Clear inputs
-                    document.getElementById("popup-session-id").value = "";
-                    document.getElementById("popup-gc-count").value = "";
-                    document.getElementById("popup-gc-text").value = "";
-                    document.getElementById("popup-nc-text").value = "";
-                    document.getElementById("popup-delay").value = "";
                 } else {
                     alert(data.message || "Invalid Session ID!");
                 }
@@ -299,18 +299,20 @@
             let html = "";
             activeAccounts.forEach((acc, idx) => {
                 html += `
-                    <div class="bg-black/50 border border-cyan-500/30 p-3 rounded-2xl space-y-2 text-xs">
-                        <div class="flex justify-between items-center">
-                            <span class="text-cyan-300 font-bold">@${acc.username}</span>
-                            <span class="text-[9px] bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded">${acc.status}</span>
+                    <div class="bg-black/60 border border-red-900 p-4 rounded-2xl space-y-2 text-xs neon-border">
+                        <div class="flex justify-between items-center border-b border-red-950 pb-2">
+                            <span class="text-red-400 font-bold">@${acc.username}</span>
+                            <span class="text-[9px] bg-red-950 text-red-300 px-2 py-0.5 rounded">${acc.status}</span>
                         </div>
-                        <div class="text-[10px] text-gray-300 space-y-0.5">
+                        <div class="text-[10px] text-gray-300 space-y-1">
                             <div>GCs: ${acc.gcCount} | Text: ${acc.gcText || 'N/A'}</div>
                             <div>NC: ${acc.ncText || 'N/A'} | Delay: ${acc.delay}s</div>
+                            <div class="text-emerald-400">Add Users: ${acc.addUsers || 'None'}</div>
+                            <div class="text-red-400">Remove Users: ${acc.removeUsers || 'None'}</div>
                         </div>
-                        <div class="flex gap-2 pt-1">
-                            <button type="button" onclick="startAccountTask(${idx})" class="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 btn-3d ios-bold text-[10px] rounded-lg text-white">Start 🚀</button>
-                            <button type="button" onclick="stopAccountTask(${idx})" class="flex-1 py-1.5 bg-rose-600 hover:bg-rose-500 btn-3d ios-bold text-[10px] rounded-lg text-white">Stop 🛑</button>
+                        <div class="flex gap-2 pt-2">
+                            <button type="button" onclick="startAccountTask(${idx})" class="flex-1 py-1.5 bg-red-600 hover:bg-red-500 font-bold text-[10px] rounded-lg text-white neon-btn">START 🚀</button>
+                            <button type="button" onclick="stopAccountTask(${idx})" class="flex-1 py-1.5 bg-gray-900 hover:bg-gray-800 font-bold text-[10px] rounded-lg text-gray-300 border border-red-900">STOP 🛑</button>
                         </div>
                     </div>
                 `;
@@ -323,7 +325,7 @@
             const fd = new URLSearchParams();
             fd.append("task_type", "multisession_automation");
             fd.append("session_id", acc.sessionId);
-            fd.append("target_data", `${acc.gcText}|${acc.delay}|${acc.ncText}|${acc.delay}`);
+            fd.append("target_data", `${acc.gcText}|${acc.delay}|${acc.ncText}|${acc.delay}|${acc.addUsers}|${acc.removeUsers}`);
 
             acc.status = "Running 24/7";
             renderAccounts();
@@ -361,7 +363,6 @@
             try {
                 const res = await fetch("/api/logs/all");
                 const data = await res.json();
-                
                 ["instagram", "telegram", "whatsapp"].forEach(mod => {
                     const el = document.getElementById(`logs-${mod}`);
                     if(el && data.logs[mod]) {
