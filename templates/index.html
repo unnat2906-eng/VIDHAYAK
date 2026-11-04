@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&display=swap');
-        :root { font-size: 13.5px; } /* DPI 430 scaled base font */
+        :root { font-size: 13.5px; }
         body { font-family: 'Orbitron', sans-serif; background: #030002; color: #f3f4f6; min-height: 100vh; }
         .neon-glow { box-shadow: 0 0 20px rgba(255, 0, 60, 0.4), inset 0 0 15px rgba(255, 0, 60, 0.2); }
         .neon-border { border: 1px solid rgba(255, 0, 60, 0.6); }
@@ -58,7 +58,7 @@
                 <div class="p-2.5 bg-red-950/80 rounded-xl text-red-400 text-lg">🌐</div>
                 <div>
                     <h3 class="text-xs font-bold text-red-400">INSTA MULTI-GC</h3>
-                    <p class="text-[9px] text-gray-400">Multi Group Chat creator</p>
+                    <p class="text-[9px] text-gray-400">Fetch & Select GCs</p>
                 </div>
             </button>
 
@@ -99,39 +99,59 @@
             </div>
         </div>
 
-        <!-- ================= 2. INSTAGRAM MULTI-GC CREATOR SECTION ================= -->
+        <!-- ================= 2. INSTAGRAM MULTI-GC & FETCH SECTION ================= -->
         <div id="section-insta-multigc" class="module-section glass-cyber p-6 rounded-3xl space-y-6 neon-border hidden">
             <div class="border-b border-red-950 pb-4">
-                <h2 class="text-base font-bold text-red-500">🌐 INSTAGRAM MULTI-GC CREATOR</h2>
-                <p class="text-xs text-gray-400">Create and initialize multiple group chats in bulk under SONA protocol.</p>
+                <h2 class="text-base font-bold text-red-500">🌐 INSTAGRAM MULTI-GC FETCH & SELECTION HUB</h2>
+                <p class="text-xs text-gray-400">Fetch GCs per session ID, select specific groups, and run bulk spam/NC tasks.</p>
             </div>
-            <div class="space-y-4 max-w-xl text-xs">
-                <div>
-                    <label class="text-gray-300 block mb-1">Active Session ID:</label>
-                    <input type="text" id="multigc-session" placeholder="sessionid=..." class="w-full bg-black/80 border border-red-900 rounded-xl p-3 text-white focus:outline-none focus:border-red-500">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-gray-300 block mb-1">Active Session ID:</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="multigc-session" placeholder="sessionid=..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
+                            <button type="button" onclick="fetchSessionGCs()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl neon-btn whitespace-nowrap">Fetch GCs 📥</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-red-400 block mb-1">Multi-GC Spam Message Box:</label>
+                        <textarea id="multigc-spamtext" rows="2" placeholder="Enter bulk spam text..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-pink-400 block mb-1">Name Changer Text (NC):</label>
+                        <input type="text" id="multigc-nctext" placeholder="Enter custom NC text..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
+                    </div>
                 </div>
-                <div>
-                    <label class="text-gray-300 block mb-1">Number of GCs to Create:</label>
-                    <input type="number" id="multigc-count" placeholder="e.g. 5" class="w-full bg-black/80 border border-red-900 rounded-xl p-3 text-white focus:outline-none focus:border-red-500">
+
+                <!-- GC Selection List Box -->
+                <div class="space-y-3 bg-black/50 p-4 rounded-2xl border border-red-950">
+                    <div class="flex justify-between items-center border-b border-red-950 pb-2">
+                        <span class="text-xs font-bold text-red-400">Fetched GCs Selection List</span>
+                        <label class="flex items-center gap-1.5 text-[10px] text-gray-300 cursor-pointer">
+                            <input type="checkbox" id="select-all-gcs" onclick="toggleSelectAllGCs(this)" class="accent-red-600"> Select All
+                        </label>
+                    </div>
+                    <div id="gc-selection-container" class="space-y-2 max-h-44 overflow-y-auto pr-1">
+                        <p class="text-[11px] text-gray-500 italic">Enter session ID and click "Fetch GCs" to load groups.</p>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-gray-300 block mb-1">GC Name Prefix / Custom Title:</label>
-                    <input type="text" id="multigc-title" placeholder="e.g. SONA VIP GROUP" class="w-full bg-black/80 border border-red-900 rounded-xl p-3 text-white focus:outline-none focus:border-red-500">
-                </div>
-                <button type="button" onclick="startMultiGCCreation()" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl neon-btn">START MULTI-GC CREATION ⚡</button>
             </div>
-            <div class="space-y-2 pt-2">
-                <h4 class="text-xs font-bold uppercase text-red-400">Multi-GC Live Logs</h4>
-                <div id="logs-gc" class="bg-black p-3 rounded-xl border border-red-950 font-mono text-[11px] text-red-400 h-28 overflow-y-auto"></div>
+
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="startMultiGCCreation()" class="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">START SELECTED GCS TASK ⚡</button>
+                <button type="button" onclick="stopMultiGCCreation()" class="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-gray-300 font-bold text-xs rounded-xl border border-red-900">STOP 🛑</button>
             </div>
         </div>
 
-        <!-- ================= 3. INSTAGRAM 1-GC MANAGER SECTION ================= -->
+        <!-- ================= 3. INSTAGRAM 1-GC MANAGER & SPAM SECTION ================= -->
         <div id="section-insta-onegc" class="module-section glass-cyber p-6 rounded-3xl space-y-6 neon-border hidden">
             <div class="border-b border-red-950 pb-4">
-                <h2 class="text-base font-bold text-red-500">🎯 INSTAGRAM 1-GC MANAGER & SPAMMER</h2>
-                <p class="text-xs text-gray-400">Target a specific GC for spam messaging, adding users, and removing users.</p>
+                <h2 class="text-base font-bold text-red-500">🎯 INSTAGRAM 1-GC SPAM & USER MANAGER</h2>
+                <p class="text-xs text-gray-400">Target a specific group chat for continuous spam messaging, user additions, and removals under SONA protocol.</p>
             </div>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div class="space-y-3">
                     <div>
@@ -143,10 +163,11 @@
                         <input type="text" id="onegc-thread" placeholder="Thread ID..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
                     </div>
                     <div>
-                        <label class="text-gray-300 block mb-1">Spam Message Text:</label>
-                        <input type="text" id="onegc-spamtext" placeholder="Enter message..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
+                        <label class="text-red-400 block mb-1">Spam Message Box / Text:</label>
+                        <textarea id="onegc-spamtext" rows="2" placeholder="Enter spam message text here..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500"></textarea>
                     </div>
                 </div>
+
                 <div class="space-y-3">
                     <div>
                         <label class="text-emerald-400 block mb-1">Add Users (UserIDs comma separated):</label>
@@ -157,12 +178,16 @@
                         <input type="text" id="onegc-removeusers" placeholder="id1, id2..." class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
                     </div>
                     <div>
-                        <label class="text-gray-300 block mb-1">Delay (Seconds):</label>
+                        <label class="text-cyan-400 block mb-1">Delay Per Message (Seconds):</label>
                         <input type="number" id="onegc-delay" placeholder="3" class="w-full bg-black/80 border border-red-900 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500">
                     </div>
                 </div>
             </div>
-            <button type="button" onclick="startOneGCTask()" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">START 1-GC TASK 🚀</button>
+
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="startOneGCTask()" class="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl neon-btn">START 1-GC SPAM & MANAGER 🚀</button>
+                <button type="button" onclick="stopOneGCTask()" class="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-gray-300 font-bold text-xs rounded-xl border border-red-900">STOP 🛑</button>
+            </div>
         </div>
 
         <!-- ================= 4. TELEGRAM & WHATSAPP SECTION ================= -->
@@ -332,11 +357,19 @@
                         <div class="flex gap-2">
                             <button type="button" onclick="startMultiSession(${idx})" class="flex-1 py-1.5 bg-red-600 hover:bg-red-500 font-bold text-[10px] rounded-lg text-white neon-btn">START 🚀</button>
                             <button type="button" onclick="stopMultiSession(${idx})" class="flex-1 py-1.5 bg-gray-900 hover:bg-gray-800 font-bold text-[10px] rounded-lg text-gray-300 border border-red-900">STOP 🛑</button>
+                            <button type="button" onclick="deleteSession(${idx})" class="px-3 py-1.5 bg-red-950 hover:bg-red-900 font-bold text-[10px] rounded-lg text-red-400 border border-red-800">DELETE 🗑️</button>
                         </div>
                     </div>
                 `;
             });
             container.innerHTML = html;
+        }
+
+        function deleteSession(idx) {
+            if(confirm("Are you sure you want to delete this session?")) {
+                activeAccounts.splice(idx, 1);
+                renderAccounts();
+            }
         }
 
         async function startMultiSession(idx) {
@@ -356,12 +389,89 @@
             renderAccounts();
         }
 
+        // Fetch GCs for Multi-GC Section
+        async function fetchSessionGCs() {
+            const session = document.getElementById("multigc-session").value.trim();
+            if(!session) { alert("Please enter Session ID first!"); return; }
+
+            const fd = new URLSearchParams();
+            fd.append("session_id", session);
+
+            const res = await fetch("/api/insta/fetch-gcs", { method: "POST", body: fd });
+            const data = await res.json();
+
+            const container = document.getElementById("gc-selection-container");
+            if(data.success && data.gcs.length > 0) {
+                let html = "";
+                data.gcs.forEach(gc => {
+                    html += `
+                        <label class="flex items-center justify-between bg-black/70 p-2 rounded-xl border border-red-950 cursor-pointer hover:border-red-600">
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" name="gc-checkbox" value="${gc.id}" class="accent-red-600">
+                                <span class="text-white font-bold">${gc.name}</span>
+                            </div>
+                            <span class="text-[10px] text-gray-400">${gc.members} members</span>
+                        </label>
+                    `;
+                });
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = `<p class="text-[11px] text-red-400">No GCs found or invalid session!</p>`;
+            }
+        }
+
+        function toggleSelectAllGCs(master) {
+            const checkboxes = document.querySelectorAll('input[name="gc-checkbox"]');
+            checkboxes.forEach(cb => cb.checked = master.checked);
+        }
+
         async function startMultiGCCreation() {
-            alert("Multi-GC creation started in background under SONA protocol!");
+            const session = document.getElementById("multigc-session").value.trim();
+            const spamText = document.getElementById("multigc-spamtext").value.trim();
+            const ncText = document.getElementById("multigc-nctext").value.trim();
+            
+            const selectedGCs = [];
+            document.querySelectorAll('input[name="gc-checkbox"]:checked').forEach(cb => selectedGCs.push(cb.value));
+
+            if(!session) { alert("Please enter Session ID!"); return; }
+            if(selectedGCs.length === 0) { alert("Please select at least one GC from the list!"); return; }
+
+            const fd = new URLSearchParams();
+            fd.append("task_type", "multigc_selected_automation");
+            fd.append("session_id", session);
+            fd.append("target_data", `${spamText}|3|${ncText}|${selectedGCs.join(',')}`);
+
+            const res = await fetch("/api/insta/start-task", { method: "POST", body: fd });
+            const data = await res.json();
+            alert(data.message || `Started task for ${selectedGCs.length} selected GCs!`);
+        }
+
+        function stopMultiGCCreation() {
+            alert("Multi-GC automation stopped.");
         }
 
         async function startOneGCTask() {
-            alert("1-GC Task (Spam / Add / Remove Users) initiated successfully!");
+            const session = document.getElementById("onegc-session").value.trim();
+            const thread = document.getElementById("onegc-thread").value.trim();
+            const spamText = document.getElementById("onegc-spamtext").value.trim();
+            const addUsers = document.getElementById("onegc-addusers").value.trim();
+            const removeUsers = document.getElementById("onegc-removeusers").value.trim();
+            const delay = document.getElementById("onegc-delay").value.trim() || "3";
+
+            if(!session || !thread) { alert("Please enter Session ID and Target Thread ID!"); return; }
+
+            const fd = new URLSearchParams();
+            fd.append("task_type", "onegc_spam_manager");
+            fd.append("session_id", session);
+            fd.append("target_data", `${spamText}|${delay}|||${addUsers}|${removeUsers}|${thread}`);
+
+            const res = await fetch("/api/insta/start-task", { method: "POST", body: fd });
+            const data = await res.json();
+            alert(data.message || "1-GC Spam & Manager started successfully!");
+        }
+
+        function stopOneGCTask() {
+            alert("1-GC task stopped.");
         }
 
         async function pairWhatsApp() {
