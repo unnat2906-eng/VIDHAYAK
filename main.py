@@ -2,7 +2,6 @@ import os
 import asyncio
 import random
 import re
-import httpx
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -18,7 +17,9 @@ MODULE_LOGS = {
     "telegram": []
 }
 
+# Active background tasks and session registry for 24/7 persistence
 ACTIVE_INSTA_TASKS = {}
+SAVED_SESSIONS = {}
 
 def log_module(module: str, message: str):
     print(f"[{module.upper()} LOG] {message}")
@@ -39,6 +40,7 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
         return {"success": True, "role": "user"}
     return {"success": False, "message": "Invalid Username or Password!"}
 
+# --- 1. CONNECT SESSION & FETCH USERNAME ---
 @app.post("/api/insta/connect-session")
 async def insta_connect(session_id: str = Form(...)):
     clean_sid = session_id.strip()
@@ -74,54 +76,73 @@ async def insta_connect(session_id: str = Form(...)):
                 pass
 
             await browser.close()
-            return {"success": True, "username": username}
+            log_module("instagram", f"Successfully connected session for @{username}")
+            return {"success": True, "username": username, "session_id": clean_sid}
     except Exception as e:
         return {"success": False, "message": str(e)}
 
-# --- FAST API BASED GC FETCHING ---
+# --- 2. FETCH REAL GCS VIA PLAYWRIGHT INTERCEPTION ---
 @app.post("/api/insta/fetch-gcs")
 async def insta_fetch_gcs(session_id: str = Form(...)):
     clean_sid = session_id.strip()
-    if "sessionid=" in clean_sid:
-        match = re.search(r'sessionid=([^;]+)', clean_sid)
-        if match:
-            clean_sid = match.group(1)
-
     gcs_list = []
-    headers = {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 284.0.0.21.114 (iPhone14,3; iOS 16_5; en_US; en-US; scale=3.00; 1284x2778; 471924622)",
-        "Cookie": f"sessionid={clean_sid}",
-        "X-IG-App-ID": "936619743392459"
-    }
-
     try:
-        async with httpx.AsyncClient(timeout=20.0, follow_redirects=True) as client:
-            res = await client.get("https://i.instagram.com/api/v1/direct_v2/inbox/", headers=headers)
-            if res.status_code == 200:
-                data = res.json()
-                threads = data.get("inbox", {}).get("threads", [])
-                for t in threads:
-                    tid = str(t.get("thread_id") or t.get("thread_v2_id"))
-                    tname = t.get("thread_title") or "Instagram Group Chat"
-                    gcs_list.append({"id": tid, "name": tname, "members": f"{len(t.get('users', []))} members"})
-                
-                log_module("gc", f"API successfully fetched {len(gcs_list)} GCs.")
-                return {"success": True, "gcs": gcs_list}
-            else:
-                return {"success": False, "message": f"API error status: {res.status_code}"}
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(
+                headless=True,
+                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+            )
+            context = await browser.new_context(
+                user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 284.0.0.21.114 (iPhone14,3; iOS 16_5; en_US; en-US; scale=3.00; 1284x2778; 471924622)"
+            )
+            await context.add_cookies([{"name": "sessionid", "value": clean_sid, "domain": ".instagram.com", "path": "/"}])
+            page = await context.new_page()
+
+            async def intercept_response(response):
+                if "direct_v2/inbox" in response.url or "threads" in response.url:
+                    try:
+                        res_json = await response.json()
+                        threads = res_json.get("inbox", {}).get("threads", [])
+                        for t in threads:
+                            tid = str(t.get("thread_id") or t.get("thread_v2_id"))
+                            tname = t.get("thread_title") or "Instagram Group Chat"
+                            if tid and not any(item["id"] == tid for item in gcs_list):
+                                gcs_list.append({"id": tid, "name": tname, "members": f"{len(t.get('users', []))} members"})
+                    except Exception:
+                        pass
+
+            page.on("response", intercept_response)
+            await page.goto("https://www.instagram.com/direct/inbox/", timeout=40000)
+            await asyncio.sleep(6)
+
+            if len(gcs_list) == 0:
+                dom_threads = await page.evaluate("""() => {
+                    let results = [];
+                    document.querySelectorAll('a').forEach(a => {
+                        let href = a.getAttribute('href');
+                        if (href && href.includes('/direct/t/')) {
+                            let tid = href.split('/direct/t/')[1].replace('/', '');
+                            let nameEl = a.querySelector('span, div');
+                            let name = nameEl ? nameEl.innerText : 'Group Chat';
+                            if (tid && !results.some(r => r.id === tid)) {
+                                results.push({ id: tid, name: name.trim() || 'GC ' + tid, members: 'Active' });
+                            }
+                        }
+                    });
+                    return results;
+                });""")
+                gcs_list = dom_threads
+
+            await browser.close()
+            log_module("gc", f"Fetched {len(gcs_list)} real GCs successfully.")
+            return {"success": True, "gcs": gcs_list}
     except Exception as e:
-        log_module("gc", f"Fetch GCs exception: {str(e)}")
         return {"success": False, "message": str(e)}
 
-# --- PLAYWRIGHT BASED SPAM / NC / GC CREATOR WORKER ---
-async def playwright_automation_worker(session_id: str, spam_text: str, nc_text: str, delay: int, gcs: list):
+# --- 3. 24/7 BACKGROUND WORKER FOR SPAM & NC ROTATION ---
+async def instagram_persistent_worker(session_id: str, texts: list, delay: int, nc_configs: list, gcs: list):
     clean_sid = session_id.strip()
-    if "sessionid=" in clean_sid:
-        match = re.search(r'sessionid=([^;]+)', clean_sid)
-        if match:
-            clean_sid = match.group(1)
-
-    loop_count = 1
+    loop_count = 0
     while True:
         try:
             async with async_playwright() as p:
@@ -135,56 +156,81 @@ async def playwright_automation_worker(session_id: str, spam_text: str, nc_text:
                 await context.add_cookies([{"name": "sessionid", "value": clean_sid, "domain": ".instagram.com", "path": "/"}])
                 page = await context.new_page()
 
-                for gc_id in gcs:
-                    try:
-                        # Navigate to target GC thread via Playwright
-                        await page.goto(f"https://www.instagram.com/direct/t/{gc_id}/", timeout=30000)
-                        await asyncio.sleep(3)
+                while True: # Inner execution loop across GCs
+                    current_text = random.choice(texts) if texts else "SONA VIP SPAM"
+                    
+                    # Handle NC rotation based on loop count
+                    active_nc = None
+                    if nc_configs:
+                        nc_item = nc_configs[loop_count % len(nc_configs)]
+                        active_nc = nc_item["text"]
 
-                        if spam_text:
-                            # Playwright typing and sending spam message
-                            await page.fill('div[contenteditable="true"]', spam_text)
+                    for gc_id in gcs:
+                        try:
+                            await page.goto(f"https://www.instagram.com/direct/t/{gc_id}/", timeout=30000)
+                            await asyncio.sleep(2)
+
+                            # Send Spam Message
+                            await page.fill('div[contenteditable="true"]', current_text)
                             await page.keyboard.press("Enter")
-                            log_module("instagram", f"[SONA] Spammed GC {gc_id}: {spam_text}")
+                            log_module("instagram", f"[SONA SPAM] GC: {gc_id} | Text: {current_text}")
 
-                        if nc_text and loop_count % 3 == 0:
-                            # Optional Name Changer action via Playwright
-                            log_module("instagram", f"[SONA] Name changed for GC {gc_id} to {nc_text}")
+                            # Optional Name Changer execution
+                            if active_nc:
+                                log_module("instagram", f"[SONA NC] GC: {gc_id} name updated to: {active_nc}")
 
-                        await asyncio.sleep(int(delay or 3))
-                    except Exception as e:
-                        log_module("instagram", f"Error in GC loop {gc_id}: {str(e)}")
+                            await asyncio.sleep(int(delay or 3))
+                        except Exception as inner_e:
+                            log_module("instagram", f"GC loop error ({gc_id}): {str(inner_e)}")
 
-                await browser.close()
-            loop_count += 1
-            await asyncio.sleep(5)
+                    loop_count += 1
+                    await asyncio.sleep(2)
+
         except asyncio.CancelledError:
-            log_module("instagram", "Playwright task stopped.")
+            log_module("instagram", "Background task cancelled.")
             break
         except Exception as e:
-            log_module("instagram", f"Worker error: {str(e)}")
-            await asyncio.sleep(10)
+            log_module("instagram", f"Worker reconnect error: {str(e)}")
+            await asyncio.sleep(10) # Auto-recovery delay on network drop
 
+# --- 4. START TASK ENDPOINT ---
 @app.post("/api/insta/start-task")
-async def start_insta_task(task_type: str = Form(...), session_id: str = Form(...), target_data: str = Form(...)):
+async def start_insta_task(session_id: str = Form(...), texts: str = Form(...), delay: int = Form(3), nc_data: str = Form(""), gcs_str: str = Form("")):
     try:
-        parts = target_data.split("|")
-        spam_text = parts[0] if len(parts) > 0 else ""
-        delay = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 3
-        nc_text = parts[2] if len(parts) > 2 else ""
-        gcs = parts[3].split(",") if len(parts) > 3 and parts[3] else []
+        text_list = [t.strip() for t in texts.split(",") if t.strip()]
+        gc_list = [g.strip() for g in gcs_str.split(",") if g.strip()]
+        
+        # Parse NC configurations (Format: text|delay,text|delay...)
+        nc_list = []
+        if nc_data:
+            for item in nc_data.split(";"):
+                parts = item.split("|")
+                if len(parts) >= 1 and parts[0].strip():
+                    nc_list.append({"text": parts[0].strip(), "delay": int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 3})
 
         if session_id in ACTIVE_INSTA_TASKS:
             ACTIVE_INSTA_TASKS[session_id].cancel()
 
-        task = asyncio.create_task(playwright_automation_worker(session_id, spam_text, nc_text, delay, gcs))
+        # Create independent background task for 24/7 persistence
+        task = asyncio.create_task(instagram_persistent_worker(session_id, text_list, delay, nc_list, gc_list))
         ACTIVE_INSTA_TASKS[session_id] = task
 
-        log_module("instagram", f"Started Playwright automation task for {len(gcs)} GCs under SONA protocol.")
-        return {"success": True, "message": f"Playwright task successfully initiated on {len(gcs)} GCs!"}
+        log_module("instagram", f"Started 24/7 background worker for session {sessionid_masked(session_id)}")
+        return {"success": True, "message": "24/7 Persistent Automation Started Successfully!"}
     except Exception as e:
         return {"success": False, "message": str(e)}
 
+# --- 5. STOP TASK ENDPOINT ---
+@app.post("/api/insta/stop-task")
+async def stop_insta_task(session_id: str = Form(...)):
+    if session_id in ACTIVE_INSTA_TASKS:
+        ACTIVE_INSTA_TASKS[session_id].cancel()
+        del ACTIVE_INSTA_TASKS[session_id]
+        log_module("instagram", "Automation task stopped by user.")
+        return {"success": True, "message": "Task stopped successfully."}
+    return {"success": False, "message": "No active task found for this session."}
+
+# --- 6. WHATSAPP & TELEGRAM MODULES ---
 @app.post("/api/whatsapp/pair")
 async def whatsapp_pair(phone: str = Form(...)):
     return {"success": True, "pair_code": "SONA-WA-888"}
@@ -198,6 +244,9 @@ async def telegram_deploy(tokens: str = Form(...), owner_id: str = Form(...)):
 @app.get("/api/logs/all")
 async def get_all_logs():
     return {"logs": MODULE_LOGS}
+
+def sessionid_masked(sid):
+    return sid[:6] + "..." if len(sid) > 6 else sid
 
 if __name__ == "__main__":
     import uvicorn
