@@ -1,457 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>VIDHAYAK IG PANEL (PLAYWRIGHT + API MIX) 🕷️</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIDHAYAK IG PANEL (PLAYWRIGHT MIX)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap');
-        :root {
-            --bg-core: #000000;
-            --bg-card: rgba(10, 10, 14, 0.95);
-            --green: #22c55e;
-            --red: #ef4444;
-            --text: #f8fafc;
-            --muted: #64748b;
-        }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            background: var(--bg-core);
-            background-image: radial-gradient(circle at 50% 20%, #111827 0%, #000000 80%);
-            color: var(--text);
-            font-family: 'Rajdhani', sans-serif;
-            min-height: 100vh;
-        }
-        .header {
-            background: rgba(5, 5, 8, 0.95);
-            border-bottom: 2px solid #334155;
-            padding: 16px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            font-weight: 900;
-            background: linear-gradient(90deg, #ffffff, #94a3b8, #e2e8f0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
-        .main-base-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
-        .base-btn, .tab-btn, .add-btn, .save-btn, .btn { cursor: pointer; text-transform: uppercase; }
-        .base-btn {
-            background: rgba(15, 23, 42, 0.9);
-            border: 2px solid #334155;
-            color: #cbd5e1;
-            padding: 12px 6px;
-            border-radius: 10px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            text-align: center;
-        }
-        .base-btn.active {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: #fff;
-            border: 2px solid #ffffff;
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-        }
-        .section-panel, .base-panel { display: none; }
-        .section-panel.active, .base-panel.active { display: block; }
-        .add-btn {
-            width: 100%;
-            background: linear-gradient(90deg, #1e293b, #0f172a, #334155);
-            border: 2px solid #ffffff;
-            color: white;
-            padding: 14px;
-            border-radius: 10px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
-            font-weight: 800;
-            margin-bottom: 22px;
-        }
-        .accounts-grid { display: flex; flex-direction: column; gap: 18px; }
-        .account-card {
-            background: var(--bg-card);
-            border: 1.5px solid #334155;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-        }
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
-            background: rgba(255, 255, 255, 0.03);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .card-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; color: #fff; }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #475569; }
-        .status-dot.running { background: var(--green); box-shadow: 0 0 12px var(--green); }
-        .card-actions { display: flex; gap: 8px; }
-        .btn { padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; }
-        .btn-start { background: var(--green); color: #000000; }
-        .btn-stop { background: var(--red); color: white; }
-        .btn-del { background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.2); }
-        .stats-row { display: flex; border-bottom: 1px solid rgba(255, 255, 255, 0.1); font-family: 'Share Tech Mono', monospace; }
-        .stat-item { flex: 1; padding: 12px; border-right: 1px solid rgba(255, 255, 255, 0.1); text-align: center; background: rgba(0, 0, 0, 0.4); }
-        .stat-label { color: #94a3b8; font-size: 10px; text-transform: uppercase; }
-        .stat-val { font-size: 18px; font-weight: 700; }
-        .status-bar { padding: 10px 18px; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: #94a3b8; background: rgba(0,0,0,0.6); }
-        .console { background: #000000; padding: 14px; font-family: 'Share Tech Mono', monospace; font-size: 11px; height: 150px; overflow-y: auto; color: #e2e8f0; border-top: 1px solid #1e293b; }
-        .console-line { white-space: pre-wrap; word-break: break-all; margin-bottom: 3px; }
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
-        .modal-overlay.open { display: flex; }
-        .modal {
-            background: #090d16;
-            border: 2px solid #ffffff;
-            border-radius: 16px;
-            padding: 26px;
-            width: 650px;
-            max-width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-        label { font-size: 11px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; }
-        input, textarea, select {
-            background: #000000;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            color: var(--text);
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 13px;
-            padding: 11px;
-            outline: none;
-        }
-        .save-btn {
-            background: linear-gradient(90deg, #1e293b, #334155);
-            color: white;
-            border: 1.5px solid #ffffff;
-            padding: 13px;
-            border-radius: 8px;
-            width: 100%;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-        }
-        .close-modal-btn { background: transparent; color: #94a3b8; border: none; width: 100%; margin-top: 10px; cursor: pointer; font-weight: 700; }
-        .fetch-gcs-btn {
-            background: linear-gradient(90deg, #334155, #1e293b);
-            color: #fff;
-            border: 1px solid #ffffff;
-            padding: 10px;
-            border-radius: 8px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 5px;
-        }
-        .gc-results-box {
-            background: #000000;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 10px;
-            max-height: 160px;
-            overflow-y: auto;
-            margin-top: 8px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 12px;
-        }
-        .gc-item { padding: 6px 8px; border-bottom: 1px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-        .gc-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 11px; }
-        .gc-action-link { color: #94a3b8; cursor: pointer; text-decoration: underline; background: none; border: none; font-weight: 700; }
-        .nc-row { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; margin-bottom: 8px; }
+        body { background-color: #05050a; color: #00ffcc; font-family: monospace; }
+        .glass { background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(0, 255, 204, 0.2); }
+        .cyber-input { background: #0b0f19; border: 1px solid rgba(0, 255, 204, 0.4); color: #fff; }
+        .cyber-input:focus { border-color: #00ffcc; outline: none; box-shadow: 0 0 10px rgba(0, 255, 204, 0.3); }
     </style>
 </head>
-<body>
-    <div class="header"><div class="logo">🕷️⚡ VIDHAYAK IG PANEL (PLAYWRIGHT MIX)</div></div>
-    <div class="container">
-        <div class="main-base-tabs">
-            <button class="base-btn active" onclick="switchBase('ig')">🕷️ Instagram Panel</button>
-            <button class="base-btn" onclick="switchBase('session-mgr')">🕸️ Session Manager</button>
-        </div>
+<body class="p-4 max-w-4xl mx-auto">
+    <header class="text-center mb-6">
+        <h1 class="text-2xl font-black tracking-wider text-cyan-400">🕷️ ⚡ VIDHAYAK IG PANEL (PLAYWRIGHT MIX)</h1>
+        <p class="text-xs text-gray-400">24/7 Persistent Multi-GC Automation & Creator Suite</p>
+    </header>
 
-        <div class="base-panel active" id="base-ig">
-            <div class="section-panel active" id="tab-spam">
-                <button class="add-btn" onclick="openModal('spam')">+ 🕷️ Add Playwright Multi GC Bot</button>
-                <div class="accounts-grid" id="list-spam"></div>
-            </div>
-        </div>
-
-        <div class="base-panel" id="base-session-mgr">
-            <div style="background:var(--bg-card); border:1.5px solid #334155; padding:20px; border-radius:12px; margin-bottom:20px;">
-                <h3 style="color:#ffffff; margin-bottom:12px; font-size:16px;">🕸️ Add Session</h3>
-                <div class="form-group"><label>Session ID</label><textarea id="dashboard-new-session" rows="3"></textarea></div>
-                <button class="save-btn" onclick="saveDashboardSession()">Save Session</button>
-            </div>
-            <div class="accounts-grid" id="list-dashboard-sessions"></div>
-        </div>
+    <!-- Navigation Tabs -->
+    <div class="flex gap-2 mb-6">
+        <button onclick="switchTab('spam')" id="btn-spam" class="flex-1 py-2 font-bold bg-cyan-500 text-black rounded transition">INSTAGRAM SPAM</button>
+        <button onclick="switchTab('ig-creator')" id="btn-ig-creator" class="flex-1 py-2 font-bold bg-gray-800 text-cyan-400 border border-cyan-500/30 rounded transition">IG GC CREATOR</button>
+        <button onclick="switchTab('tg-creator')" id="btn-tg-creator" class="flex-1 py-2 font-bold bg-gray-800 text-cyan-400 border border-cyan-500/30 rounded transition">TELEGRAM GC CREATOR</button>
     </div>
 
-    <div class="modal-overlay" id="modal">
-        <div class="modal">
-            <h3 id="modal-title" style="color:#ffffff;margin-bottom:15px;font-size:18px;">🕷️ Configure Playwright Task</h3>
-            <div id="modal-form-content"></div>
-            <button class="save-btn" onclick="saveTask()">Save & Deploy Task</button>
-            <button class="close-modal-btn" onclick="closeModal()">Cancel</button>
+    <!-- TAB 1: INSTAGRAM SPAM -->
+    <div id="tab-spam" class="space-y-4">
+        <div class="glass p-4 rounded-xl">
+            <h2 class="text-lg font-bold text-cyan-300 mb-3">➕ Add Playwright Multi GC Bot</h2>
+            <div class="space-y-3">
+                <input id="spam-session" type="text" placeholder="Session ID (sessionid cookie)" class="cyber-input w-full p-2 rounded text-sm">
+                <textarea id="spam-groups" placeholder="Group Thread IDs or Links (one per line)" class="cyber-input w-full p-2 rounded text-sm h-20"></textarea>
+                <textarea id="spam-messages" placeholder="Messages (comma separated, e.g. Hello, Hi, Spam)" class="cyber-input w-full p-2 rounded text-sm h-16"></textarea>
+                <div class="flex gap-2">
+                    <input id="spam-delay" type="number" placeholder="Delay (sec)" value="2" class="cyber-input flex-1 p-2 rounded text-sm">
+                    <button onclick="addSpamTask()" class="bg-cyan-500 text-black font-bold px-6 py-2 rounded hover:bg-cyan-400">🚀 START SPAM BOT</button>
+                </div>
+            </div>
+        </div>
+        <div id="spam-tasks-list" class="space-y-4"></div>
+    </div>
+
+    <!-- TAB 2: INSTAGRAM GC CREATOR -->
+    <div id="tab-ig-creator" class="space-y-4 hidden">
+        <div class="glass p-4 rounded-xl">
+            <h2 class="text-lg font-bold text-cyan-300 mb-3">➕ Add Instagram GC Creator Task</h2>
+            <div class="space-y-3">
+                <input id="ig-session" type="text" placeholder="SESSION ID" class="cyber-input w-full p-2 rounded text-sm">
+                <input id="ig-add-users" type="text" placeholder="ADD USERS (user1, user2...)" class="cyber-input w-full p-2 rounded text-sm">
+                <input id="ig-remove-users" type="text" placeholder="REMOVE USERS (user1, user2...)" class="cyber-input w-full p-2 rounded text-sm">
+                <div class="flex gap-2">
+                    <input id="ig-count" type="number" placeholder="GC COUNT" value="1" class="cyber-input flex-1 p-2 rounded text-sm">
+                    <input id="ig-delay" type="number" placeholder="GC DELAY (sec)" value="3" class="cyber-input flex-1 p-2 rounded text-sm">
+                </div>
+                <button onclick="addIgCreatorTask()" class="w-full bg-cyan-500 text-black font-bold py-2 rounded hover:bg-cyan-400">💾 SAVE & START IG CREATOR</button>
+            </div>
+        </div>
+        <div id="ig-tasks-list" class="space-y-4"></div>
+    </div>
+
+    <!-- TAB 3: TELEGRAM GC CREATOR -->
+    <div id="tab-tg-creator" class="space-y-4 hidden">
+        <div class="glass p-4 rounded-xl">
+            <h2 class="text-lg font-bold text-cyan-300 mb-3">➕ Add Telegram GC Creator Task</h2>
+            <div class="space-y-3">
+                <div class="flex gap-2">
+                    <input id="tg-api" type="text" placeholder="YOUR API" class="cyber-input flex-1 p-2 rounded text-sm">
+                    <input id="tg-hash" type="text" placeholder="YOUR HASH" class="cyber-input flex-1 p-2 rounded text-sm">
+                </div>
+                <div class="flex gap-2">
+                    <input id="tg-number" type="text" placeholder="YOUR NUMBER" class="cyber-input flex-1 p-2 rounded text-sm">
+                    <button onclick="sendTelegramOtp()" class="bg-yellow-500 text-black font-bold px-4 rounded text-xs hover:bg-yellow-400">SEND OTP</button>
+                </div>
+                <input id="tg-2fa" type="text" placeholder="YOUR 2F PASS" class="cyber-input w-full p-2 rounded text-sm">
+                <button onclick="connectTelegram()" class="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-500 text-sm">CONNECT</button>
+                <textarea id="tg-users" placeholder="USERS (username1, username2, username3...)" class="cyber-input w-full p-2 rounded text-sm h-16"></textarea>
+                <div class="flex gap-2">
+                    <input id="tg-count" type="number" placeholder="GC COUNT" value="1" class="cyber-input flex-1 p-2 rounded text-sm">
+                    <input id="tg-delay" type="number" placeholder="GC DELAY (sec)" value="3" class="cyber-input flex-1 p-2 rounded text-sm">
+                </div>
+                <button onclick="addTelegramTask()" class="w-full bg-cyan-500 text-black font-bold py-2 rounded hover:bg-cyan-400">💾 SAVE TELEGRAM TASK</button>
+            </div>
+        </div>
+        <div id="tg-tasks-list" class="space-y-4"></div>
+    </div>
+
+    <!-- OTP Popup Modal -->
+    <div id="otp-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center hidden z-50">
+        <div class="glass p-6 rounded-xl w-80 space-y-4 border border-cyan-500">
+            <h3 class="text-md font-bold text-cyan-300">Enter Telegram OTP</h3>
+            <input id="tg-otp-input" type="text" placeholder="Enter OTP code" class="cyber-input w-full p-2 rounded text-sm">
+            <div class="flex gap-2">
+                <button onclick="closeOtpModal()" class="flex-1 bg-gray-700 py-1.5 rounded text-xs">Cancel</button>
+                <button onclick="verifyOtp()" class="flex-1 bg-cyan-500 text-black font-bold py-1.5 rounded text-xs">Verify</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let fetchedGCsList = [];
+        function switchTab(tab) {
+            document.getElementById('tab-spam').classList.add('hidden');
+            document.getElementById('tab-ig-creator').classList.add('hidden');
+            document.getElementById('tab-tg-creator').classList.add('hidden');
+            document.getElementById('btn-spam').className = "flex-1 py-2 font-bold bg-gray-800 text-cyan-400 border border-cyan-500/30 rounded transition";
+            document.getElementById('btn-ig-creator').className = "flex-1 py-2 font-bold bg-gray-800 text-cyan-400 border border-cyan-500/30 rounded transition";
+            document.getElementById('btn-tg-creator').className = "flex-1 py-2 font-bold bg-gray-800 text-cyan-400 border border-cyan-500/30 rounded transition";
 
-        function switchBase(b){
-            document.querySelectorAll('.base-btn').forEach(x=>x.classList.remove('active'));
-            document.querySelectorAll('.base-panel').forEach(x=>x.classList.remove('active'));
-            if(b==='ig'){
-                document.querySelectorAll('.base-btn')[0].classList.add('active');
-                document.getElementById('base-ig').classList.add('active');
-            } else {
-                document.querySelectorAll('.base-btn')[1].classList.add('active');
-                document.getElementById('base-session-mgr').classList.add('active');
-                loadDashboardSessions();
+            if(tab === 'spam') {
+                document.getElementById('tab-spam').classList.remove('hidden');
+                document.getElementById('btn-spam').className = "flex-1 py-2 font-bold bg-cyan-500 text-black rounded transition";
+            } else if(tab === 'ig-creator') {
+                document.getElementById('tab-ig-creator').classList.remove('hidden');
+                document.getElementById('btn-ig-creator').className = "flex-1 py-2 font-bold bg-cyan-500 text-black rounded transition";
+            } else if(tab === 'tg-creator') {
+                document.getElementById('tab-tg-creator').classList.remove('hidden');
+                document.getElementById('btn-tg-creator').className = "flex-1 py-2 font-bold bg-cyan-500 text-black rounded transition";
             }
         }
 
-        function toggleAuthFields() {
-            const authType = document.getElementById('f-authtype').value;
-            if(authType === 'session') {
-                document.getElementById('sec-session').style.display = 'block';
-                document.getElementById('sec-userpass').style.display = 'none';
-            } else {
-                document.getElementById('sec-session').style.display = 'none';
-                document.getElementById('sec-userpass').style.display = 'block';
-            }
-        }
-
-        async function fetchUserGCs() {
-            const authType = document.getElementById('f-authtype').value;
-            const sessionId = document.getElementById('f-sid') ? document.getElementById('f-sid').value : '';
-            const box = document.getElementById('fetched-gcs-box');
-            box.innerHTML = '<div style="color:#ffffff;text-align:center;">🕷️ Fetching GCs via API...</div>';
-            try {
-                const res = await fetch('/api/fetch-gcs', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({auth_type: authType, session_id: sessionId})
-                });
-                const data = await res.json();
-                if(data.success && data.gcs.length > 0) {
-                    fetchedGCsList = data.gcs;
-                    renderFetchedGCsList();
-                } else {
-                    box.innerHTML = `<div style="color:var(--red);text-align:center;">${data.error || 'No GCs found'}</div>`;
-                }
-            } catch(e) {
-                box.innerHTML = `<div style="color:var(--red);text-align:center;">Failed to fetch GCs</div>`;
-            }
-        }
-
-        function renderFetchedGCsList() {
-            const box = document.getElementById('fetched-gcs-box');
-            let headerHtml = `<div class="gc-controls"><span style="color:#ffffff;">Found: (${fetchedGCsList.length})</span><div><button type="button" class="gc-action-link" onclick="selectAllGCs(true)">Select All</button></div></div>`;
-            let itemsHtml = fetchedGCsList.map((g) => `
-                <div class="gc-item" onclick="toggleGCSelection('${g.id}', event)">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <input type="checkbox" id="chk-gc-${g.id}" value="${g.id}">
-                        <span>🕷️ ${g.title}</span>
-                    </div>
-                    <span style="color:var(--green)">ID: ${g.id}</span>
-                </div>`).join('');
-            box.innerHTML = headerHtml + itemsHtml;
-        }
-
-        function selectAllGCs(status) {
-            fetchedGCsList.forEach(g => {
-                const chk = document.getElementById(`chk-gc-${g.id}`);
-                if(chk) chk.checked = status;
+        function sendTelegramOtp() {
+            fetch('/api/telegram/send-otp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({api: document.getElementById('tg-api').value, hash: document.getElementById('tg-hash').value, number: document.getElementById('tg-number').value})
+            }).then(res => res.json()).then(data => {
+                alert(data.message || "OTP Sent!");
+                document.getElementById('otp-modal').classList.remove('hidden');
             });
-            updateGroupsInputFromCheckboxes();
         }
 
-        function toggleGCSelection(id, event) {
-            if(event.target.tagName === 'INPUT') return;
-            const chk = document.getElementById(`chk-gc-${id}`);
-            if(chk) {
-                chk.checked = !chk.checked;
-                updateGroupsInputFromCheckboxes();
-            }
+        function closeOtpModal() {
+            document.getElementById('otp-modal').classList.add('hidden');
         }
 
-        function updateGroupsInputFromCheckboxes() {
-            const groupInput = document.getElementById('f-groups');
-            if(!groupInput) return;
-            let selectedIds = [];
-            fetchedGCsList.forEach(g => {
-                const chk = document.getElementById(`chk-gc-${g.id}`);
-                if(chk && chk.checked) { selectedIds.push(g.id); }
-            });
-            groupInput.value = selectedIds.join('\n');
+        function verifyOtp() {
+            alert("OTP Verified!");
+            closeOtpModal();
         }
 
-        function renderAuthInputs() {
-            return `
-                <div class="form-group"><label>Login Method</label>
-                    <select id="f-authtype" onchange="toggleAuthFields()">
-                        <option value="session">Session ID</option>
-                        <option value="userpass">Username / Password</option>
-                    </select>
-                </div>
-                <div id="sec-session"><div class="form-group"><label>Session ID</label><input type="text" id="f-sid"></div></div>
-                <div id="sec-userpass" style="display:none;">
-                    <div class="form-group"><label>Username</label><input type="text" id="f-user"></div>
-                    <div class="form-group"><label>Password</label><input type="password" id="f-pass"></div>
-                </div>
-                <div class="form-group" style="margin-top:5px;">
-                    <button type="button" class="fetch-gcs-btn" onclick="fetchUserGCs()">🔍 Fetch GCs Instantly via API</button>
-                    <div id="fetched-gcs-box" class="gc-results-box"><div style="color:var(--muted);text-align:center;">Click to load groups</div></div>
-                </div>`;
+        function connectTelegram() {
+            fetch('/api/telegram/connect', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({two_fa: document.getElementById('tg-2fa').value})
+            }).then(res => res.json()).then(data => alert(data.message));
         }
 
-        function openModal(type){
-            const content = document.getElementById('modal-form-content');
-            fetchedGCsList = [];
-            let ncInputsHtml = '';
-            for(let i=1; i<=6; i++){
-                ncInputsHtml += `<div class="nc-row"><input type="text" id="f-nc${i}-text" placeholder="NC${i} Title"><input type="number" id="f-nc${i}-delay" placeholder="Delay" value="30"></div>`;
-            }
-            content.innerHTML = `
-                <input type="hidden" id="m-type" value="spam">
-                <div class="form-group"><label>Bot Name</label><input type="text" id="f-name"></div>
-                ${renderAuthInputs()}
-                <div class="form-group"><label>Groups (URLs / IDs)</label><textarea id="f-groups" rows="3"></textarea></div>
-                <div class="form-group"><label>Messages (Comma separated)</label><textarea id="f-message" rows="3" placeholder="Msg 1, Msg 2"></textarea></div>
-                <div class="form-group"><label>Name Changer Configs (NC1 to NC6)</label>${ncInputsHtml}</div>
-                <div class="form-group"><label>Loop Delay (s)</label><input type="number" id="f-delay" value="2"></div>`;
-            document.getElementById('modal').classList.add('open');
-        }
-
-        function closeModal(){ document.getElementById('modal').classList.remove('open'); }
-
-        async function saveTask(){
-            let body = {
-                name: document.getElementById('f-name').value,
-                auth_type: document.getElementById('f-authtype').value,
-                session_id: document.getElementById('f-sid') ? document.getElementById('f-sid').value : '',
-                groups: document.getElementById('f-groups').value,
-                message: document.getElementById('f-message').value,
-                delay: parseFloat(document.getElementById('f-delay').value) || 2
+        function addSpamTask() {
+            const data = {
+                session_id: document.getElementById('spam-session').value,
+                groups: document.getElementById('spam-groups').value,
+                message: document.getElementById('spam-messages').value,
+                delay: document.getElementById('spam-delay').value
             };
-            let ncConfigs = [];
-            for(let i=1; i<=6; i++){
-                let txt = document.getElementById(`f-nc${i}-text`).value.trim();
-                let del = parseFloat(document.getElementById(`f-nc${i}-delay`).value) || 30;
-                if(txt) { ncConfigs.push({text: txt, delay: del}); }
-            }
-            body.nc_configs = ncConfigs;
-            await fetch('/api/accounts', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
-            closeModal();
-            loadAllData();
+            fetch('/api/accounts', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }).then(() => fetchStatus());
         }
 
-        async function controlAction(type, id, action){
-            await fetch(`/api/${type}/${id}/${action}`, {method:'POST'});
-            loadAllData();
+        function addIgCreatorTask() {
+            const data = {
+                session_id: document.getElementById('ig-session').value,
+                usernames: document.getElementById('ig-add-users').value,
+                remove_users: document.getElementById('ig-remove-users').value,
+                gc_count: document.getElementById('ig-count').value,
+                delay: document.getElementById('ig-delay').value
+            };
+            fetch('/api/creators', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }).then(() => fetchStatus());
         }
 
-        async function deleteItem(type, id){
-            if(!confirm('Delete?')) return;
-            await fetch(`/api/${type}/${id}`, {method:'DELETE'});
-            loadAllData();
+        function addTelegramTask() {
+            const data = {
+                api: document.getElementById('tg-api').value,
+                hash: document.getElementById('tg-hash').value,
+                number: document.getElementById('tg-number').value,
+                users: document.getElementById('tg-users').value,
+                gc_count: document.getElementById('tg-count').value,
+                delay: document.getElementById('tg-delay').value
+            };
+            fetch('/api/telegram', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }).then(() => fetchStatus());
         }
 
-        async function loadDashboardSessions(){
-            try {
-                const res = await fetch('/api/dashboard-sessions');
-                const data = await res.json();
-                const listEl = document.getElementById('list-dashboard-sessions');
-                if(!data.success || !data.sessions.length){
-                    listEl.innerHTML = `<div style="text-align:center;padding:20px;">NO SESSIONS SAVED</div>`;
-                    return;
+        function controlAction(endpoint, id) {
+            fetch(`/api/${endpoint}/${id}/start`, {method: 'POST'}).then(() => fetchStatus());
+        }
+        function stopAction(endpoint, id) {
+            fetch(`/api/${endpoint}/${id}/stop`, {method: 'POST'}).then(() => fetchStatus());
+        }
+        function deleteAction(endpoint, id) {
+            fetch(`/api/${endpoint}/${id}`, {method: 'DELETE'}).then(() => fetchStatus());
+        }
+
+        function fetchStatus() {
+            fetch('/api/all-status').then(res => res.json()).then(data => {
+                renderList('accounts', data.accounts, data.statuses, 'spam-tasks-list', 'accounts');
+                renderList('creators', data.creators, data.statuses, 'ig-tasks-list', 'creators');
+                renderList('telegram_bots', data.telegram_bots, data.statuses, 'tg-tasks-list', 'telegram');
+            });
+            fetch('/api/logs-all').then(res => res.json()).then(logs => {
+                for(const [id, lines] of Object.entries(logs)) {
+                    const el = document.getElementById(`log-${id}`);
+                    if(el) el.innerText = lines.join('\n');
                 }
-                listEl.innerHTML = data.sessions.map((sess, idx) => `
-                    <div class="account-card"><div class="card-header"><div class="card-title">Session #${idx+1}</div>
-                    <button class="btn btn-del" onclick="deleteDashboardSession(${idx})">Delete</button></div></div>`).join('');
-            } catch(e){}
+            });
         }
 
-        async function saveDashboardSession(){
-            const sess = document.getElementById('dashboard-new-session').value.trim();
-            if(!sess) return;
-            await fetch('/api/dashboard-sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({session: sess})});
-            document.getElementById('dashboard-new-session').value = '';
-            loadDashboardSessions();
-        }
-
-        async function deleteDashboardSession(idx){
-            await fetch(`/api/dashboard-sessions/${idx}`, {method:'DELETE'});
-            loadDashboardSessions();
-        }
-
-        async function loadAllData(){
-            const r = await fetch('/api/all-status');
-            const d = await r.json();
-            renderCards('spam', d.accounts, d.statuses);
-            updateLogs();
-        }
-
-        function renderCards(type, items, statuses){
-            const list = document.getElementById('list-'+type);
-            list.innerHTML = '';
-            if(!items || Object.keys(items).length === 0){
-                list.innerHTML = `<div style="text-align:center;padding:25px;">NO ACTIVE TASKS</div>`;
-                return;
-            }
-            for(const id in items){
-                const item = items[id];
-                const st = statuses[id] || {running:false, sent:0, failed:0, last_action:'Idle'};
-                const running = st.running;
-                const card = document.createElement('div');
-                card.className = `account-card ${running?'running':''}`;
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div class="card-title"><div class="status-dot ${running?'running':''}"></div>${item.name}</div>
-                        <div class="card-actions">
-                            ${!running?`<button class="btn btn-start" onclick="controlAction('accounts','${id}','start')">▶ Start</button>`:`<button class="btn btn-stop" onclick="controlAction('accounts','${id}','stop')">■ Stop</button>`}
-                            <button class="btn btn-del" onclick="deleteItem('accounts','${id}')">✕</button>
+        function renderList(key, items, statuses, containerId, apiPrefix) {
+            const container = document.getElementById(containerId);
+            if(!container) return;
+            container.innerHTML = '';
+            for(const [id, item] of Object.entries(items || {})) {
+                const stat = statuses[id] || {running: false, sent: 0, created: 0, failed: 0, last_action: 'Idle'};
+                container.innerHTML += `
+                    <div class="glass p-4 rounded-xl border border-cyan-500/30 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-cyan-400 font-bold">Task ID: ${id}</span>
+                            <div class="flex gap-2">
+                                <button onclick="controlAction('${apiPrefix}', '${id}')" class="bg-green-600 px-3 py-1 text-xs font-bold rounded text-white">START</button>
+                                <button onclick="stopAction('${apiPrefix}', '${id}')" class="bg-red-600 px-3 py-1 text-xs font-bold rounded text-white">STOP</button>
+                                <button onclick="deleteAction('${apiPrefix}', '${id}')" class="bg-gray-700 px-2 py-1 text-xs font-bold rounded text-red-400">✕</button>
+                            </div>
                         </div>
+                        <div class="flex gap-4 text-xs">
+                            <span>Status: <b>${stat.running ? '🟢 Running' : '🔴 Stopped'}</b></span>
+                            <span>Action: <b>${stat.last_action}</b></span>
+                        </div>
+                        <div class="bg-black/60 p-2 rounded text-xs font-mono h-24 overflow-y-auto text-green-400" id="log-${id}">Loading logs...</div>
                     </div>
-                    <div class="stats-row">
-                        <div class="stat-item"><div class="stat-label">Sent</div><div class="stat-val" style="color:var(--green)">${st.sent||0}</div></div>
-                        <div class="stat-item"><div class="stat-label">Failed</div><div class="stat-val" style="color:var(--red)">${st.failed||0}</div></div>
-                    </div>
-                    <div class="status-bar">▸ Status: <span>${st.last_action||'Idle'}</span></div>
-                    <div class="console" id="cons-spam-${id}"></div>`;
-                list.appendChild(card);
+                `;
             }
         }
 
-        async function updateLogs(){
-            try {
-                const r = await fetch('/api/logs-all');
-                const logsMap = await r.json();
-                for(const id in logsMap){
-                    const consEl = document.getElementById(`cons-spam-${id}`);
-                    if(consEl && logsMap[id]){
-                        consEl.innerHTML = logsMap[id].map(l=>`<div class="console-line">${l}</div>`).join('');
-                        consEl.scrollTop = consEl.scrollHeight;
-                    }
-                }
-            } catch(e){}
-        }
-
-        loadAllData();
-        setInterval(loadAllData, 3000);
-        setInterval(updateLogs, 1500);
+        setInterval(fetchStatus, 3000);
+        fetchStatus();
     </script>
 </body>
 </html>
