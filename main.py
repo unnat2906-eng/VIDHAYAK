@@ -6,7 +6,7 @@ import threading
 import collections
 import asyncio
 from pathlib import Path
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from instagrapi import Client
 from playwright.sync_api import sync_playwright
 import werkzeug
@@ -110,7 +110,6 @@ def bot_worker(task_id, cfg, stop_event):
                             page.goto(f"https://www.instagram.com/direct/t/{group_id}/", timeout=35000)
                             page.wait_for_timeout(2500)
                             
-                            # Type & send message using Playwright editor
                             page.fill('div[contenteditable="true"]', curr_msg)
                             page.keyboard.press("Enter")
                             
@@ -123,7 +122,6 @@ def bot_worker(task_id, cfg, stop_event):
                         msg_idx += 1
                         time.sleep(delay)
 
-                    # Process NC items (NC1 through NC6) with individual custom intervals
                     if nc_configs and not stop_event.is_set():
                         current_time = time.time()
                         for i, nc in enumerate(nc_configs):
@@ -153,10 +151,7 @@ def bot_worker(task_id, cfg, stop_event):
 # API Routes for Dashboard & Task Management
 @app.route("/")
 def home():
-    try:
-        return app.send_static_file("index.html")
-    except:
-        return "Backend active! Place index.html inside a folder named 'templates'."
+    return render_template("index.html")
 
 @app.route("/api/dashboard-sessions", methods=["GET", "POST"])
 def dashboard_sessions_api():
@@ -209,7 +204,6 @@ def delete_file(filename):
         os.remove(fp)
     return jsonify({"success": True})
 
-# Instant API-based GC Fetcher using instagrapi
 @app.route("/api/fetch-gcs", methods=["POST"])
 def api_fetch_gcs():
     body = request.json
